@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة ميزان للمحاكاة المحاسبية</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+
+        :root {
+            --primary-color: #1a365d; /* أزرق داكن رسمي */
+            --secondary-color: #2b6cb0; /* أزرق حيوي */
+            --accent-color: #d69e2e; /* ذهبي للتميز */
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --success-color: #2f855a;
+            --danger-color: #c53030;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg-color);
+            color: #2d3748;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-bottom: 5px solid var(--accent-color);
+        }
+
+        header h1 { margin: 0; font-size: 2.8rem; font-weight: 700; letter-spacing: 1px; }
+        header p { margin: 0.5rem 0 0; font-size: 1.2rem; opacity: 0.9; }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 20px -3px rgba(0,0,0,0.1);
+        }
+
+        .section-card > h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+            display: inline-block;
+            font-size: 1.6rem;
+        }
+
+        .section-description {
+            color: #718096;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background 0.3s ease, transform 0.1s ease;
+        }
+
+        button:hover { background-color: var(--primary-color); }
+        button:active { transform: scale(0.98); }
+        button:disabled { background-color: #cbd5e0; cursor: not-allowed; opacity: 0.6; }
+
+        input, select {
+            padding: 0.6rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus { border-color: var(--secondary-color); }
+
+        /* الجداول */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+            text-align: right;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td { padding: 1rem; border: 1px solid #e2e8f0; }
+        th { background: var(--primary-color); color: white; font-weight: 500; }
+
+        /* خيارات الأسئلة */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .option-btn {
+            background-color: #f7fafc;
+            color: #2d3748;
+            border: 1px solid #e2e8f0;
+            text-align: right;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .option-btn:hover { background-color: #edf2f7; color: var(--primary-color); }
+
+        /* الشهادة */
+        .certificate-box {
+            border: 8px double var(--accent-color);
+            padding: 3rem;
+            background: #fffdf9;
+            text-align: center;
+            position: relative;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+        .cert-title { font-size: 2.2rem; color: var(--primary-color); font-weight: bold; margin-bottom: 1rem; }
+        .cert-name { font-size: 1.8rem; color: var(--secondary-color); font-weight: bold; border-bottom: 2px dashed #cbd5e0; display: inline-block; min-width: 250px; margin: 1rem 0; padding-bottom: 0.2rem; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #printable-certificate, #printable-certificate * { visibility: visible; }
+            #printable-certificate { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>مـيـزان</h1>
+        <p>منصتك المحاسبية المتكاملة للتدريب، المحاكاة، ومعايير القطاع العام</p>
+    </header>
+
+    <div class="container">
+
+        <div class="section-card">
+            <h2>1. دفتر اليومية العامة الإيجابي (القيود المركبة)</h2>
+            <p class="section-description">قم بتسجيل العمليات المالية المركبة أو البسيطة وتأكد من توازن الطرفين قبل الترحيل.</p>
+            
+            <div style="display: flex; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 280px;">
+                    <h3 style="color: var(--success-color); margin-bottom: 0.5rem;">الطرف المدين (من حـ/)</h3>
+                    <div id="debit-rows">
+                        <div class="entry-row" style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem;">
+                            <input type="text" placeholder="اسم الحساب" class="debit-account" style="flex: 2;">
+                            <input type="number" placeholder="المبلغ" class="debit-amount" onkeyup="checkBalance()" style="flex: 1;">
+                        </div>
+                    </div>
+                    <button onclick="addDebitRow()" style="background-color: var(--success-color); font-size: 0.85rem; margin-top: 0.5rem;">+ إضافة حساب مدين</button>
+                </div>
+
+                <div style="flex: 1; min-width: 280px;">
+                    <h3 style="color: var(--danger-color); margin-bottom: 0.5rem;">الطرف الدائن (إلى حـ/)</h3>
+                    <div id="credit-rows">
+                        <div class="entry-row" style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem;">
+                            <input type="text" placeholder="اسم الحساب" class="credit-account" style="flex: 2;">
+                            <input type="number" placeholder="المبلغ" class="credit-amount" onkeyup="checkBalance()" style="flex: 1;">
+                        </div>
+                    </div>
+                    <button onclick="addCreditRow()" style="background-color: var(--danger-color); font-size: 0.85rem; margin-top: 0.5rem;">+ إضافة حساب دائن</button>
+                </div>
+            </div>
+
+            <div style="background: #edf2f7; padding: 1.2rem; border-radius: 8px; text-align: center; margin-top: 1rem;">
+                <p style="margin: 0 0 0.5rem 0; font-size: 1.1rem;">إجمالي المدين: <strong id="total-debit" style="color:var(--success-color);">0</strong> | إجمالي الدائن: <strong id="total-credit" style="color:var(--danger-color);">0</strong></p>
+                <p id="balance-status" style="font-weight: bold; color: var(--danger-color); margin: 0;">القيد غير متوازن ❌</p>
+                <button onclick="submitCompoundEntry()" id="submit-entry-btn" disabled style="width: 100%; margin-top: 1rem;">ترحيل القيد المالي</button>
+            </div>
+
+            <table id="journal-table">
+                <thead>
+                    <tr>
+                        <th style="width: 8%;">م</th>
+                        <th style="width: 52%;">البيان والتوجيه المحاسبي</th>
+                        <th style="width: 20%;">مدين (ريال)</th>
+                        <th style="width: 20%;">دائن (ريال)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+
+        <div class="section-card">
+            <h2>2. المحقق المحاسبي 🔍</h2>
+            <p class="section-description">اقرأ الحالة المالية العملية التالية بتمعن، واكتشف الخطأ المهني الذي وقع فيه المحاسب.</p>
+            
+            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border-right: 4px solid var(--accent-color);">
+                <h4 style="margin-top: 0;">الحالة رقم 1: شراء أصول ثابتة</h4>
+                <p>قامت المنشأة بـ<strong>شراء أثاث مكتبي</strong> للاستخدام الإداري بمبلغ <strong>5,000 ريال نقداً</strong>. قام محاسب المنشأة بتسجيل القيد كالتالي:</p>
+                <div style="background: #edf2f7; padding: 0.8rem; text-align: center; font-weight: bold; border-radius: 6px; margin: 1rem 0;">
+                    5000 من حـ/ المشتريات | 5000 إلى حـ/ الصندوق
+                </div>
+                
+                <p style="font-weight: 500;">ما هو الخطأ الجوهري في هذا التوجيه؟</p>
+                <div class="options-container">
+                    <button class="option-btn" onclick="checkDetective(this, false)">لا يوجد خطأ والقيد صحيح نظاماً</button>
+                    <button class="option-btn" onclick="checkDetective(this, true)">استخدام حساب "المشتريات" خطأ؛ لأن الأثاث أصل ثابت وليس بضاعة لغرض البيع</button>
+                    <button class="option-btn" onclick="checkDetective(this, false)">الخطأ في الطرف الدائن وكان يجب استخدام حـ/ البنك</button>
+                </div>
+                <p id="detective-feedback" style="display: none; margin-top: 1rem; font-weight: bold;"></p>
+            </div>
+        </div>
+
+
+        <div class="section-card">
+            <h2>3. معايير المحاسبة للقطاع العام (SOCPA) 🏛️</h2>
+            <p class="section-description">اختبر مهاراتك المتقدمة في معايير الإبلاغ المالي الدولية في القطاع العام (IPSAS) والتحول لأساس الاستحقاق.</p>
+            
+            <div style="margin-bottom: 1.5rem; padding: 1.2rem; background: #fafafa; border-radius: 8px;">
+                <h4 style="margin-top: 0;">س1: متى يتم الاعتراف بالإيرادات الناتجة عن عمليات غير تبادلية (كالضرائب والرسوم)؟</h4>
+                <div class="options-container">
+                    <button class="option-btn" onclick="checkSocpa(this, false)">عند تحصيل المبالغ النقدية في الخزينة العامة فعلياً</button>
+                    <button class="option-btn" onclick="checkSocpa(this, true)">عند نشوء الحدث الخاضع للضريبة وتوافر تدفق منافع اقتصادية مستقبلاً قابلة للقياس</button>
+                </div>
+                <p class="socpa-feedback" style="display: none; margin-top: 0.5rem; font-weight: bold;"></p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem; padding: 1.2rem; background: #fafafa; border-radius: 8px;">
+                <h4 style="margin-top: 0;">س2: أي معيار يعالج الأصول العقارية والآلات والمعدات التابعة للمرافق الحكومية؟</h4>
+                <div class="options-container">
+                    <button class="option-btn" onclick="checkSocpa(this, true)">IPSAS 17 (العقارات والآلات والمعدات)</button>
+                    <button class="option-btn" onclick="checkSocpa(this, false)">IPSAS 1 (عرض القوائم المالية)</button>
+                </div>
+                <p class="socpa-feedback" style="display: none; margin-top: 0.5rem; font-weight: bold;"></p>
+            </div>
+        </div>
+
+
+        <div class="section-card">
+            <h2>4. اختبار الكفاءة المحاسبية الأساسي</h2>
+            <p class="section-description">أجب عن الأسئلة بدقة لتجاوز التقييم (مطلوب نسبة 100% لفتح وتفعيل شهادة التخرج الإلكترونية).</p>
+            
+            <div id="quiz-container">
+                <div class="quiz-question" style="margin-bottom: 1.5rem;">
+                    <p style="font-weight: 500;">س1: المصاريف المدفوعة مقدماً تعتبر في الميزانية العمومية كـ:</p>
+                    <select class="quiz-ans" style="width: 100%;">
+                        <option value="">-- اختر الإجابة الصحيحة --</option>
+                        <option value="correct">أصل متداول</option>
+                        <option value="wrong">التزام متداول</option>
+                        <option value="wrong">إيراد مستحق</option>
+                    </select>
+                </div>
+
+                <div class="quiz-question" style="margin-bottom: 1.5rem;">
+                    <p style="font-weight: 500;">س2: ما هي المعادلة المحاسبية الصحيحة والملزمة لمركز المنشأة المالي؟</p>
+                    <select class="quiz-ans" style="width: 100%;">
+                        <option value="">-- اختر الإجابة الصحيحة --</option>
+                        <option value="wrong">الأصول = الالتزامات - حقوق الملكية</option>
+                        <option value="correct">الأصول = الالتزامات + حقوق الملكية</option>
+                        <option value="wrong">الإيرادات - المصاريف = الأصول</option>
+                    </select>
+                </div>
+
+                <button onclick="evaluateQuiz()" style="width: 100%; background-color: var(--primary-color);">إرسال الإجابات وتقييم النتيجة</button>
+            </div>
+            <p id="quiz-result-msg" style="margin-top: 1rem; font-weight: bold; text-align: center; font-size: 1.1rem;"></p>
+        </div>
+
+
+        <div class="section-card" id="certificate-section">
+            <h2>5. شهادة التميز والإتمام 🎓</h2>
+            
+            <div id="cert-locked" style="background: #fff5f5; border: 1px dashed var(--danger-color); padding: 2rem; text-align: center; border-radius: 8px;">
+                <p style="color: var(--danger-color); font-weight: bold; margin: 0;">🔒 قسم الشهادة مغلق حالياً. يجب عليك اجتياز "اختبار الكفاءة المحاسبية الأساسي" بنجاح أولاً لتوليد وثيقتك المعتمدة.</p>
+            </div>
+
+            <div id="cert-unlocked" style="display: none;">
+                <p style="color: var(--success-color); font-weight: bold; text-align: center;">🎉 مبروك! لقد نجحت في الاختبار وتأهلت للحصول على الشهادة ميزان بنجاح.</p>
+                
+                <div style="margin: 1rem auto; text-align: center; max-width: 400px;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">اكتب اسمك الثلاثي لطباعته على الشهادة:</label>
+                    <input type="text" id="student-name-input" placeholder="اسم المتدرب / المتدربة" style="width: 100%; text-align: center; font-size: 1.1rem;" onkeyup="updateCertName()">
+                </div>
+
+                <div class="certificate-box" id="printable-certificate">
+                    <div class="cert-title">شهادة إتمام ومهارة</div>
+                    <p style="font-size: 1.2rem; margin: 1rem 0;">تشهد منصة <strong>ميزان للمحاكاة المحاسبية</strong> بأن المحاسب/ـة:</p>
+                    <div class="cert-name" id="cert-display-name">اسم الطالب المتميز</div>
+                    <p style="font-size: 1.1rem; max-width: 600px; margin: 1rem auto; line-height: 1.7;">
+                        قد اجتاز بنجاح كافة التدريبات والمحاكاة العملية لقيود اليومية العامة المركبة، وتطبيقات الاستحقاق للقطاع العام وفق معايير الهيئة السعودية للمراجعين والمحاسبين (SOCPA).
+                    </p>
+                    <br>
+                    <p style="font-size: 0.95rem; color: #718096;">تاريخ التخرج والاعتماد: <span id="cert-date"></span></p>
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 1.5rem 0;">
+                    <p style="font-weight: bold; color: var(--primary-color); margin: 0;">مجلس إدارة منصة ميزان التعليمية</p>
+                </div>
+                
+                <button onclick="window.print()" style="margin-top: 1.5rem; width: 100%; background-color: #2b6cb0;">🖨️ طباعة أو حفظ الشهادة كـ PDF</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. جافاسكريبت القيود المركبة ---
+        function addDebitRow() {
+            const row = document.createElement('div');
+            row.className = 'entry-row';
+            row.style.marginBottom = '0.5rem';
+            row.style.display = 'flex';
+            row.style.gap = '0.5rem';
+            row.innerHTML = `<input type="text" placeholder="اسم الحساب" class="debit-account" style="flex:2;">
+                             <input type="number" placeholder="المبلغ" class="debit-amount" onkeyup="checkBalance()" style="flex:1;">`;
+            document.getElementById('debit-rows').appendChild(row);
+        }
+
+        function addCreditRow() {
+            const row = document.createElement('div');
+            row.className = 'entry-row';
+            row.style.marginBottom = '0.5rem';
+            row.style.display = 'flex';
+            row.style.gap = '0.5rem';
+            row.innerHTML = `<input type="text" placeholder="اسم الحساب" class="credit-account" style="flex:2;">
+                             <input type="number" placeholder="المبلغ" class="credit-amount" onkeyup="checkBalance()" style="flex:1;">`;
+            document.getElementById('credit-rows').appendChild(row);
+        }
+
+        function checkBalance() {
+            let totalDebit = 0, totalCredit = 0;
+            document.querySelectorAll('.debit-amount').forEach(inp => totalDebit += Number(inp.value) || 0);
+            document.querySelectorAll('.credit-amount').forEach(inp => totalCredit += Number(inp.value) || 0);
+
+            document.getElementById('total-debit').innerText = totalDebit;
+            document.getElementById('total-credit').innerText = totalCredit;
+
+            const status = document.getElementById('balance-status');
+            const btn = document.getElementById('submit-entry-btn');
+
+            if (totalDebit === totalCredit && totalDebit > 0) {
+                status.innerText = "القيد متوازن وجاهز للترحيل الفوري ✅";
+                status.style.color = "green";
+                btn.disabled = false;
+            } else {
+                status.innerText = "القيد غير متوازن (يجب تسوية الطرفين) ❌";
+                status.style.color = "red";
+                btn.disabled = true;
+            }
+        }
+
+        let entryCounter = 1;
+        function submitCompoundEntry() {
+            const debits = Array.from(document.querySelectorAll('#debit-rows .entry-row')).map(row => ({
+                acc: row.querySelector('.debit-account').value, amt: row.querySelector('.debit-amount').value
+            })).filter(d => d.amt > 0);
+
+            const credits = Array.from(document.querySelectorAll('#credit-rows .entry-row')).map(row => ({
+                acc: row.querySelector('.credit-account').value, amt: row.querySelector('.credit-amount').value
+            })).filter(c => c.amt > 0);
+
+            const tbody = document.querySelector('#journal-table tbody');
+            
+            debits.forEach((d, i) => {
+                tbody.innerHTML += `<tr><td>${i===0 ? entryCounter : ''}</td><td>من حـ/ ${d.acc || 'حساب مدين'}</td><td>${d.amt}</td><td></td></tr>`;
+            });
+            credits.forEach(c => {
+                tbody.innerHTML += `<tr><td></td><td style="padding-right: 2.5rem;">إلى حـ/ ${c.acc || 'حساب دائن'}</td><td></td><td>${c.amt}</td></tr>`;
+            });
+            
+            tbody.innerHTML += `<tr style="background:#f7fafc;"><td colspan="4" style="text-align:center; font-size:0.8rem; color:#a0aec0;">ــــــــــــــــــــــــ قيد مركب مرحّل رقم ${entryCounter} ــــــــــــــــــــــــ</td></tr>`;
+            entryCounter++;
+            
+            // إعادة تصفير المدخلات للعملية التالية
+            document.getElementById('debit-rows').innerHTML = `<div class="entry-row" style="margin-bottom:0.5rem; display:flex; gap:0.5rem;"><input type="text" class="debit-account" placeholder="اسم الحساب" style="flex:2;"><input type="number" class="debit-amount" placeholder="المبلغ" onkeyup="checkBalance()" style="flex:1;"></div>`;
+            document.getElementById('credit-rows').innerHTML = `<div class="entry-row" style="margin-bottom:0.5rem; display:flex; gap:0.5rem;"><input type="text" class="credit-account" placeholder="اسم الحساب" style="flex:2;"><input type="number" class="credit-amount" placeholder="المبلغ" onkeyup="checkBalance()" style="flex:1;"></div>`;
+            checkBalance();
+        }
+
+        // --- 2. جافاسكريبت المحقق المحاسبي ---
+        function checkDetective(btn, isCorrect) {
+            const container = btn.parentElement;
+            const feedback = document.getElementById('detective-feedback');
+            container.querySelectorAll('button').forEach(b => { b.disabled = true; b.style.opacity = '0.5'; });
+            
+            if(isCorrect) {
+                btn.style.backgroundColor = "green"; btn.style.color = "white"; btn.style.opacity = "1";
+                feedback.innerText = "رائع ومحترف! التوجيه الصحيح هو قيد الأصل المشتري في حساب الأثاث مباشرة لتطبيق مبدأ التكلفة التاريخية والتمييز الفني بين الأصول والمشتريات بغرض المتاجرة. 🎯";
+                feedback.style.color = "green";
+            } else {
+                btn.style.backgroundColor = "red"; btn.style.color = "white"; btn.style.opacity = "1";
+                feedback.innerText = "محاولة غير دقيقة، ركز في طبيعة الأصل المشترى والهدف منه! ❌";
+                feedback.style.color = "red";
+            }
+            feedback.style.display = "block";
+        }
+
+        // --- 3. جافاسكريبت أسئلة سوكبا ---
+        function checkSocpa(btn, isCorrect) {
+            const container = btn.parentElement;
+            const feedback = container.nextElementSibling;
+            container.querySelectorAll('button').forEach(b => { b.disabled = true; b.style.opacity = '0.5'; });
+            
+            if(isCorrect) {
+                btn.style.backgroundColor = "green"; btn.style.color = "white"; btn.style.opacity = "1";
+                feedback.innerText = "إجابة معيارية ممتازة ومتوافقة مع أدلة الهيئة السعودية للمحاسبين والمراجعين.  ✅";
+                feedback.style.color = "green";
+            } else {
+                btn.style.backgroundColor = "red"; btn.style.color = "white"; btn.style.opacity = "1";
+                feedback.innerText = "إجابة غير صحيحة، يرجى مراجعة إطار الاستحقاق في المعايير الدولية للقطاع العام. ❌";
+                feedback.style.color = "red";
+            }
+            feedback.style.display = "block";
+        }
+
+        // --- 4. تقييم اختبار الكفاءة وعلاقته بالشهادة ---
+        function evaluateQuiz() {
+            const answers = document.querySelectorAll('.quiz-ans');
+            let allCorrect = true;
+
+            answers.forEach(select => {
+                if(select.value !== 'correct') {
+                    allCorrect = false;
+                }
+            });
+
+            const resultMsg = document.getElementById('quiz-result-msg');
+            if(allCorrect) {
+                resultMsg.innerText = "تهانينا! حصلت على 100% في الاختبار. تم فتح وثيقة التخرج بالأسفل بنجاح 🔓🎓";
+                resultMsg.style.color = "green";
+                
+                // فتح لوحة الشهادة وتفعيلها
+                document.getElementById('cert-locked').style.display = 'none';
+                document.getElementById('cert-unlocked').style.display = 'block';
+                
+                // تعيين التاريخ الحالي تلقائياً
+                const today = new Date();
+                document.getElementById('cert-date').innerText = today.toLocaleDateString('ar-SA');
+            } else {
+                resultMsg.innerText = "عذراً، توجد إجابة خاطئة أو غير مكتملة. راجع الخيارات وحاول مجدداً لتفعيل الشهادة ❌";
+                resultMsg.style.color = "red";
+            }
+        }
+
+        function updateCertName() {
+            const inputVal = document.getElementById('student-name-input').value;
+            document.getElementById('cert-display-name').innerText = inputVal.trim() !== "" ? inputVal : "اسم الطالب المتميز";
+        }
+    </script>
+</body>
+</html>
