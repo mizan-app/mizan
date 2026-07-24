@@ -1572,21 +1572,105 @@ function renderCertBox(n){
 }
 
 /* ═══════════ PERSISTENCE ═══════════ */
-function saveState(){
-  try{
-    localStorage.setItem('mizan_entries',JSON.stringify(entries));
-    localStorage.setItem('mizan_scen',JSON.stringify([...solvedScen]));
-    localStorage.setItem('mizan_quizpass',quizPass?'1':'0');
-  }catch(e){}
-}
+
+    function submitQuiz(){
+  if(Object.keys(quizAns).length < questions.length){
+    alert('أجب على جميع الأسئلة أولاً.');
+    return;
+  }
+
+  // حساب النتيجة
+  const score = questions.filter((q, i) => quizAns[i] === q.c).length;
+
+  // تسجيل أن الاختبار تم حله
+  quizDone = true;
+
+  // النجاح من 11 إجابة صحيحة من أصل 15
+  quizPass = score >= 11;
+
+  // حفظ النتيجة والحالة
+  saveState();
+
+  // إعادة عرض الاختبار
+  renderQuiz();
+quizDone
+  ? (
+      quizPass
+        ? '<div class="alert a-ok">مبروك! لقد اجتزت الاختبار ويمكنك الآن إصدار شهادة الإتمام.</div>'
+        : '<button class="btn btn-ghost" onclick="resetQuiz()">إعادة المحاولة</button>'
+    )
+  : '<button class="btn btn-navy btn-full" onclick="submitQuiz()">تسليم الإجابات ✓</button>';
+      function resetQuiz(){
+  quizAns = {};
+  quizDone = false;
+  quizPass = false;
 function loadState(){
   try{
-    const e=localStorage.getItem('mizan_entries');
-    if(e){entries=JSON.parse(e);renderJournal();{const el=document.getElementById('hs-entries');if(el)el.textContent=entries.length;}}
-    const s=localStorage.getItem('mizan_scen');
-    if(s){solvedScen=new Set(JSON.parse(s));{const el=document.getElementById('hs-scen');if(el)el.textContent=solvedScen.size+'/15';}}
-    if(localStorage.getItem('mizan_quizpass')==='1')quizPass=true;
-  }catch(e){}
+    entries = JSON.parse(localStorage.getItem('mizan_entries')  '[]');
+
+    const savedPass = localStorage.getItem('mizan_quizpass');
+    quizPass = savedPass === 'true';
+
+    const savedScen = JSON.parse(
+      localStorage.getItem('mizan_scen')  '[]'
+    );
+
+    solvedScen = new Set(savedScen);
+
+    const savedQuizAns = JSON.parse(
+      localStorage.getItem('mizan_quizans') || '{}'
+    );
+
+    quizAns = savedQuizAns;
+
+    quizDone = localStorage.getItem('mizan_quizdone') === 'true';
+
+  }catch(e){
+    console.error('خطأ في تحميل البيانات:', e);
+  }
+}
+  saveState();function saveState(){
+  try{
+    localStorage.setItem(
+      'mizan_entries',
+      JSON.stringify(entries)
+    );
+
+    localStorage.setItem(
+      'mizan_scen',
+      JSON.stringify([...solvedScen])
+    );
+
+    localStorage.setItem(
+      'mizan_quizpass',
+      String(quizPass)
+    );
+
+    localStorage.setItem(
+      'mizan_quizdone',
+      String(quizDone)
+    );
+
+    localStorage.setItem(
+      'mizan_quizans',
+      JSON.stringify(quizAns)
+    );
+
+  }catch(e){
+    console.error('تعذر حفظ البيانات:', e);
+  }
+}
+        
+  renderQuiz();
+  renderCert();
+}
+  // تحديث قسم الشهادة مباشرة إذا كان مفتوحاً
+  renderCert();
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
 }
 
 /* ═══════════ INIT ═══════════ */
