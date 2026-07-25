@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ميزان برو — المنصة المحاسبية الذكية</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Amiri:wght@700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --navy:#0c2233; --navy2:#153a52; --teal:#0f9b8e; --teal-l:#d7f4ef;
+    --ink:#1c2530; --ink2:#44525f; --ink3:#7d8894;
+    --bg:#f6f4ee; --surface:#fffdf9; --border:#e6e1d5;
+    --gold2:#c9962e; --line:#e9e4d8;
+    --debit:#eaf2fd; --debit-b:#b9d5f7; --debit-t:#1d5fb8;
+    --credit:#e9f9ef; --credit-b:#b6ecc9; --credit-t:#158043;
+    --gold:#b7791f; --gold-l:#fdf3df; --red:#d33;
+    --radius:14px; --shadow:0 2px 14px rgba(15,42,67,.08); --shadow-lg:0 10px 40px rgba(15,42,67,.16);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+  /* LAYOUT: SIDEBAR */
+  .layout{display:flex;min-height:100vh}
+  .sidebar{width:256px;background:linear-gradient(185deg,#0c2233 0%,#0e2b40 70%,#123a50 100%);color:#fff;flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;border-left:1px solid rgba(201,150,46,.25)}
+  .side-logo{display:flex;align-items:center;gap:11px;font-weight:700;font-size:1.25rem;font-family:'Amiri',serif;padding:22px 20px 18px;border-bottom:1px solid rgba(201,150,46,.28)}
+  .logo-mark{width:42px;height:42px;background:linear-gradient(135deg,var(--teal),#0b7a70);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;box-shadow:0 4px 14px rgba(15,155,142,.45),inset 0 1px 0 rgba(255,255,255,.25)}
+  .side-logo small{display:block;font-size:.62rem;font-weight:400;opacity:.65;letter-spacing:1.5px}
+  .side-nav{display:flex;flex-direction:column;gap:3px;padding:16px 12px;flex:1}
+  .nav-tab{display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:none;border-right:3px solid transparent;color:rgba(255,255,255,.68);font-family:inherit;font-size:.9rem;font-weight:500;padding:11px 14px;border-radius:10px;cursor:pointer;transition:.2s;text-align:right}
+    .nav-tab:hover{background:rgba(255,255,255,.08);color:#fff}
+  .nav-tab.active{background:linear-gradient(90deg,rgba(15,155,142,.9),rgba(15,155,142,.65));border-right-color:var(--gold2);color:#fff;font-weight:700;box-shadow:0 4px 14px rgba(15,155,142,.4)}
+  .side-foot{padding:16px 20px;font-size:.7rem;color:rgba(255,255,255,.4);line-height:1.7;border-top:1px solid rgba(201,150,46,.25);font-family:'Amiri',serif;font-size:.8rem}
+  .content{flex:1;min-width:0}
+  .topbar{display:none;background:var(--navy);color:#fff;height:56px;align-items:center;gap:14px;padding:0 16px;position:sticky;top:0;z-index:150}
+  .menu-btn{background:rgba(255,255,255,.12);border:none;color:#fff;font-size:1.2rem;width:40px;height:40px;border-radius:9px;cursor:pointer}
+  .topbar-title{font-weight:700;font-size:1rem}
+  @media(max-width:860px){
+    .sidebar{position:fixed;right:0;top:0;z-index:300;transform:translateX(100%);transition:transform .25s ease;box-shadow:-8px 0 30px rgba(0,0,0,.3)}
+    .sidebar.open{transform:none}
+    .topbar{display:flex}
+  }
+
+  /* HERO */
+  .hero{padding-block:40px 36px;background:
+    repeating-linear-gradient(180deg,transparent 0 34px,rgba(94,234,212,.06) 34px 35px),
+    linear-gradient(160deg,#0c2233 0%,#123650 60%,#155066 100%);
+    color:#fff;padding:56px 24px 50px;position:relative;overflow:hidden;border-bottom:3px solid var(--gold2)}
+  .hero-scale{position:absolute;left:4%;top:50%;transform:translateY(-50%);width:210px;opacity:.16;pointer-events:none}
+  @media(max-width:760px){.hero-scale{display:none}.hero{padding:26px 18px 24px}.hero p{font-size:.9rem;margin-bottom:0}}
+  
+  .hero-inner{max-width:980px;margin:0 auto;position:relative}
+  .hero h1{font-family:'Amiri',serif;font-size:clamp(2.3rem,5.5vw,3.4rem);margin-bottom:12px;letter-spacing:.5px;text-shadow:0 2px 20px rgba(0,0,0,.3);animation:heroIn .8s ease both}
+  .hero h1 em{color:#5eead4;font-style:normal;position:relative}
+  .hero h1 em::after{content:'';position:absolute;right:0;left:0;bottom:-6px;height:3px;background:linear-gradient(90deg,var(--gold2),transparent);border-radius:2px}
+  @keyframes heroIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  .hero p{opacity:.85;max-width:560px;font-size:1.02rem;line-height:1.9;margin-bottom:26px;animation:heroIn .8s .15s ease both}
+
+  main{max-width:980px;margin:0 auto;padding:28px 16px 72px}
+  .panel{display:none}.panel.active{display:block;animation:fadeUp .35s ease}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  .card{background:var(--surface);border-radius:16px;border:1px solid var(--line);box-shadow:0 3px 18px rgba(28,37,48,.06),0 1px 3px rgba(28,37,48,.05);margin-bottom:24px;overflow:hidden}
+  .card-h{padding:19px 24px;border-bottom:1px dashed var(--line);display:flex;align-items:center;gap:13px;background:linear-gradient(180deg,rgba(15,155,142,.035),transparent)}
+  .card-h h2{font-size:1.18rem;font-weight:700;font-family:'Amiri',serif;letter-spacing:.3px}
+  .card-h p{font-size:.78rem;color:var(--ink3);margin-top:2px}
+  .card-b{padding:22px 24px}
+
+  label{font-size:.78rem;font-weight:700;color:var(--ink2);display:block;margin-bottom:6px}
+  input,select,textarea{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:.9rem;background:#fbfcfd;transition:.15s;color:var(--ink)}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--teal);background:#fff;box-shadow:0 0 0 3px rgba(13,148,136,.12)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+  @media(max-width:640px){.grid2{grid-template-columns:1fr}}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 20px;border-radius:9px;border:none;cursor:pointer;font-family:inherit;font-size:.875rem;font-weight:600;transition:.18s}
+  .btn:active{transform:scale(.98)}
+  .btn-teal{background:linear-gradient(135deg,var(--teal),#0b7f74);color:#fff;box-shadow:0 3px 10px rgba(15,155,142,.3)}.btn-teal:hover{filter:brightness(1.07)}
+  .btn-navy{background:var(--navy);color:#fff}.btn-navy:hover{background:var(--navy2)}
+  .btn-debit{background:var(--debit);color:var(--debit-t);border:1.5px solid var(--debit-b)}.btn-debit:hover{background:var(--debit-b)}
+  .btn-credit{background:var(--credit);color:var(--credit-t);border:1.5px solid var(--credit-b)}.btn-credit:hover{background:var(--credit-b)}
+  .btn-ghost{background:transparent;color:var(--ink3);border:1.5px solid var(--border)}.btn-ghost:hover{background:var(--bg)}
+  .btn-gold{background:var(--gold-l);color:var(--gold);border:1.5px solid #ecd9ad}.btn-gold:hover{background:#f5e5be}
+  .btn-danger{background:#fdecec;color:var(--red);border:1.5px solid #f5c6c6}.btn-danger:hover{background:#f5c6c6}
+  .btn-sm{padding:5px 11px;font-size:.78rem}
+  .btn-full{width:100%;padding:13px}
+
+  /* ENTRY TABLE */
+  .etbl-wrap{overflow-x:auto;margin-bottom:16px;border:1px solid var(--border);border-radius:10px}
+  .etbl{width:100%;border-collapse:collapse;font-size:.87rem;min-width:520px}
+  .etbl th{padding:10px;font-size:.74rem;font-weight:700;color:var(--ink3);background:#f7f9fa;border-bottom:1.5px solid var(--border);text-transform:uppercase;letter-spacing:.4px}
+  .etbl td{padding:7px 8px;border-bottom:1px solid var(--border)}
+  .etbl tr:last-child td{border-bottom:none}
+  .r-debit td{background:var(--debit)}
+  .r-credit td{background:var(--credit)}
+  .r-credit td:nth-child(2){padding-right:30px}
+  .tag{display:inline-block;padding:3px 12px;border-radius:20px;font-size:.72rem;font-weight:700;white-space:nowrap}
+  .tag-d{background:var(--debit-b);color:var(--debit-t)}
+  .tag-c{background:var(--credit-b);color:var(--credit-t)}
+  .etbl input{padding:8px 10px;font-size:.86rem}
+
+  .totals{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+  @media(max-width:560px){.totals{grid-template-columns:1fr}}
+  .tbox{border-radius:11px;padding:13px 16px}
+  .tbox.d{background:var(--debit);border:1.5px solid var(--debit-b)}
+  .tbox.c{background:var(--credit);border:1.5px solid var(--credit-b)}
+  .tbox.x{background:#f7f8f9;border:1.5px solid var(--border)}
+  .tbox small{font-size:.72rem;font-weight:700;color:var(--ink3);display:block;margin-bottom:4px}
+  .tbox b{font-size:1.15rem}
+  .tbox.d b{color:var(--debit-t)} .tbox.c b{color:var(--credit-t)}
+  .ok{color:var(--teal)!important}.err{color:var(--red)!important}
+
+  /* JOURNAL BOOK */
+  .jtbl-wrap{overflow-x:auto}
+  .jtbl{width:100%;border-collapse:collapse;font-size:.86rem;min-width:560px}
+  .jtbl th{padding:12px 14px;background:linear-gradient(180deg,#123650,#0c2233);color:#fff;font-size:.76rem;font-weight:600;letter-spacing:.5px;text-align:right;border-bottom:2px solid var(--gold2)}
+  .jtbl th.c{text-align:center}
+  .jtbl td{padding:10px 14px;border-bottom:1px solid var(--border)}
+  .jtbl tr:hover td{background:#f8fafb}
+  .jd{color:var(--debit-t);font-weight:700;text-align:center}
+  .jc{color:var(--credit-t);font-weight:700;text-align:center}
+  .jrow-c td:nth-child(3){padding-right:34px;color:var(--ink3)}
+  .jdiv td{background:#f2f5f7!important;padding:5px 14px;font-size:.74rem;color:var(--ink3);text-align:center;border-top:2px dashed var(--border)}
+  .empty{text-align:center;padding:52px 20px;color:var(--ink3)}
+  .empty div{font-size:2.6rem;margin-bottom:10px}
+
+  .alert{padding:13px 16px;border-radius:10px;font-size:.87rem;margin-bottom:16px;line-height:1.7}
+  .a-ok{background:var(--credit);border:1px solid var(--credit-b);color:var(--credit-t)}
+  .a-err{background:#fdecec;border:1px solid #f5c6c6;color:var(--red)}
+  .a-info{background:var(--debit);border:1px solid var(--debit-b);color:var(--debit-t)}
+  .a-gold{background:var(--gold-l);border:1px solid #ecd9ad;color:var(--gold)}
+
+
+  /* SCENARIOS */
+  .scen-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .scen-card{background:#fffdf9;border:1px solid var(--line);border-top:3px solid var(--navy);border-radius:14px;padding:20px 18px;cursor:pointer;transition:transform .22s,box-shadow .22s,border-color .22s;position:relative;animation:cardIn .5s ease both}
+  .scen-card .lvl{position:absolute;top:14px;left:14px;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:20px}
+  .lvl-1{background:var(--credit);color:var(--credit-t)}
+  .lvl-2{background:var(--gold-l);color:var(--gold)}
+  .lvl-3{background:#fdecec;color:var(--red)}
+  .scen-card .emoji{font-size:1.8rem;margin-bottom:10px}
+  .scen-card h3{font-size:1.05rem;font-weight:700;font-family:'Amiri',serif;margin-bottom:6px;color:var(--navy)}
+  .scen-card p{font-size:.79rem;color:var(--ink3);line-height:1.6}
+  .scen-card .done{position:absolute;top:-9px;left:-9px;width:26px;height:26px;background:var(--teal);color:#fff;border:2.5px solid var(--surface);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;box-shadow:0 3px 10px rgba(15,155,142,.45);z-index:2}
+
+  .scen-detail{background:#fff;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
+  .scen-head{background:linear-gradient(135deg,#0c2233,#155066);color:#fff;padding:24px 26px;border-bottom:3px solid var(--gold2)}
+  .scen-head h3{font-size:1.15rem;margin-bottom:6px}
+  .scen-head p{font-size:.85rem;opacity:.85;line-height:1.7}
+  .scen-body{padding:24px 26px}
+  .scen-story{background:var(--gold-l);border:1px solid #ecd9ad;border-radius:11px;padding:16px 18px;font-size:.9rem;line-height:1.9;margin-bottom:20px;color:#6b4a10}
+
+  /* QUIZ / options */
+  .opts{display:flex;flex-direction:column;gap:9px}
+  .opt{display:flex;align-items:flex-start;gap:11px;padding:13px 16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:.15s;font-size:.87rem;line-height:1.6;background:#fff}
+  .opt input{width:16px;height:16px;margin-top:3px;accent-color:var(--teal);flex-shrink:0}
+  .opt.ok{border-color:var(--credit-t);background:var(--credit)}
+  .opt.no{border-color:var(--red);background:#fdecec}
+  .quiz-q{margin-bottom:26px}
+  .quiz-q h3{font-size:.95rem;font-weight:700;margin-bottom:12px}
+
+  .cert{border:3px double var(--gold2);border-radius:20px;padding:44px 30px;text-align:center;background:repeating-linear-gradient(180deg,transparent 0 30px,rgba(201,150,46,.05) 30px 31px),linear-gradient(150deg,#fffdf4,#faf1dc);box-shadow:0 10px 40px rgba(201,150,46,.18)}
+  .cert h2{font-family:'Amiri',serif;font-size:2rem;color:var(--gold);margin-bottom:8px}
+  .cert .cname{font-family:'Amiri',serif;font-size:2rem;color:var(--ink);margin:18px 0 12px;border-bottom:2px solid var(--gold);display:inline-block;padding:0 24px 8px}
+  .cert p{color:var(--ink2);font-size:.9rem;line-height:1.8}
+
+  .progress-bar{height:8px;background:var(--border);border-radius:6px;overflow:hidden;margin:8px 0 4px}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--teal),#5eead4);border-radius:6px;transition:width .4s}
+
+  /* STANDARDS */
+  .std-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+  .std-card{background:#fffdf9;border:1px solid var(--line);border-top:3px solid var(--teal);border-radius:14px;padding:20px 18px;cursor:pointer;transition:transform .22s,box-shadow .22s,border-color .22s;position:relative;animation:cardIn .5s ease both}
+  .std-grid .std-card:nth-child(1){animation-delay:.03s}.std-grid .std-card:nth-child(2){animation-delay:.08s}.std-grid .std-card:nth-child(3){animation-delay:.13s}.std-grid .std-card:nth-child(4){animation-delay:.18s}.std-grid .std-card:nth-child(5){animation-delay:.23s}.std-grid .std-card:nth-child(6){animation-delay:.28s}.std-grid .std-card:nth-child(7){animation-delay:.33s}.std-grid .std-card:nth-child(8){animation-delay:.38s}.std-grid .std-card:nth-child(9){animation-delay:.43s}
+  @keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .std-code{display:inline-block;background:var(--navy);color:#fff;font-size:.7rem;font-weight:700;padding:3px 11px;border-radius:7px;margin-bottom:8px;letter-spacing:.4px}
+  .std-code.ias{background:var(--teal)}
+  .std-card h3{font-size:1.08rem;font-weight:700;font-family:'Amiri',serif;margin-bottom:7px;color:var(--navy)}
+  .std-card p{font-size:.79rem;color:var(--ink3);line-height:1.6}
+  .std-detail-head{background:linear-gradient(135deg,#0c3f39,var(--teal));color:#fff;padding:26px;border-bottom:3px solid var(--gold2)}
+  .std-detail-head h3{font-size:1.35rem;margin:10px 0 6px;font-family:'Amiri',serif}
+  .std-detail-head p{font-size:.85rem;opacity:.85}
+  .std-section{margin-bottom:22px}
+  .std-section h4{font-size:.9rem;font-weight:700;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .std-section h4::before{content:'';width:4px;height:18px;background:var(--teal);border-radius:2px}
+  .std-section p,.std-section li{font-size:.87rem;line-height:1.9;color:var(--ink2)}
+  .std-section ul{padding-right:22px;display:flex;flex-direction:column;gap:6px}
+  .std-example{background:var(--teal-l);border:1px solid #99e6dc;border-radius:11px;padding:16px 18px;font-size:.86rem;line-height:1.9;color:#0f5c54}
+  .std-example b{display:block;margin-bottom:6px}
+
+  /* PRO CERTS */
+  .pro-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+  .pro-card{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:20px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+  .pro-card::before{content:'';position:absolute;top:0;right:0;left:0;height:4px;background:linear-gradient(90deg,var(--gold2),var(--teal))}
+  .pro-abbr{font-size:1.6rem;font-weight:700;color:var(--navy);letter-spacing:1.5px;margin-bottom:4px;font-family:'Amiri',serif}
+  .pro-card h3{font-size:.88rem;font-weight:600;color:var(--ink2);margin-bottom:10px}
+  .pro-card .pro-org{font-size:.74rem;color:var(--ink3);display:flex;align-items:center;gap:6px}
+  .pro-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
+  .pro-meta-box{background:#f7f9fa;border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+  .pro-meta-box small{font-size:.7rem;font-weight:700;color:var(--ink3);display:block;margin-bottom:4px;text-transform:uppercase}
+  .pro-meta-box b{font-size:.86rem;color:var(--navy)}
+  @media(max-width:560px){.pro-meta{grid-template-columns:1fr}}
+
+  /* PRACTICE PROBLEM */
+  .prob{background:linear-gradient(150deg,#fffdf6,#faf3e2);border:1px solid #ecdfc2;border-right:4px solid var(--gold2);border-radius:14px;padding:18px 20px;animation:cardIn .4s ease both}
+  .prob-text{font-size:.95rem;line-height:2;color:#4a3a18;font-weight:500}
+  .sol-toggle{display:inline-flex;align-items:center;gap:6px;margin-top:14px;background:none;border:none;cursor:pointer;font-family:inherit;font-size:.85rem;font-weight:700;color:var(--teal);padding:0}
+  .sol-toggle:hover{color:#0b7a70;text-decoration:underline}
+  .sol-lines{margin-top:14px;border-top:1px dashed #ecdfc2;padding-top:14px;display:flex;flex-direction:column;gap:8px;animation:cardIn .35s ease both}
+  .sol-line{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;font-size:.9rem}
+  .sol-line.d{background:var(--debit);border:1px solid var(--debit-b);color:var(--debit-t);font-weight:700}
+  .sol-line.c{background:var(--credit);border:1px solid var(--credit-b);color:var(--credit-t);margin-right:26px}
+  .sol-line b{font-family:'Amiri',serif;font-size:1.05rem;white-space:nowrap}
+
+  /* SOCPA endorsement note */
+  .socpa-box{background:linear-gradient(150deg,#f2fbf9,#e6f6f2);border:1px solid #b9e5dc;border-right:4px solid var(--teal);border-radius:12px;padding:16px 18px;margin-bottom:20px;font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.88rem;line-height:2;color:#123f3a}
+  .socpa-box b{font-weight:700;font-size:inherit;font-family:inherit;color:#0b3833}
+  .socpa-box .socpa-t{display:block;font-size:.72rem;font-weight:700;letter-spacing:.6px;color:var(--teal);margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid #c6e9e2}
+
+  /* LEDGER + COMPARE */
+  .taccounts{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+  .tacct{border:1.5px solid var(--border);border-radius:12px;overflow:hidden;background:#fff}
+  .tacct-h{background:var(--navy);color:#fff;padding:10px 14px;font-weight:700;font-size:.9rem;text-align:center}
+  .tacct-cols{display:grid;grid-template-columns:1fr 1fr}
+  .tacct-col{padding:10px 12px}
+  .tacct-col:first-child{border-left:1.5px solid var(--border)}
+  .tacct-col h5{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;text-align:center}
+  .tacct-col.dd h5{color:var(--debit-t)} .tacct-col.cc h5{color:var(--credit-t)}
+  .tacct-line{font-size:.8rem;padding:3px 0;display:flex;justify-content:space-between;gap:6px;color:var(--ink2)}
+  .tacct-line b{white-space:nowrap}
+  .tacct-foot{border-top:1.5px solid var(--border);padding:9px 14px;display:flex;justify-content:space-between;font-size:.82rem;background:#f7f9fa}
+  .tacct-foot b.bal-d{color:var(--debit-t)} .tacct-foot b.bal-c{color:var(--credit-t)}
+  .tb-tbl{width:100%;border-collapse:collapse;font-size:.87rem;min-width:480px}
+  .tb-tbl th{padding:12px 14px;background:linear-gradient(180deg,#123650,#0c2233);color:#fff;font-size:.76rem;text-align:right;border-bottom:2px solid var(--gold2)}
+  .tb-tbl th.c{text-align:center}
+  .tb-tbl td{padding:10px 14px;border-bottom:1px solid var(--border)}
+  .tb-tbl tr:hover td{background:#f8fafb}
+  .tb-total td{background:var(--teal-l)!important;font-weight:700;border-top:2px solid var(--teal)}
+  .cmp-tbl{width:100%;border-collapse:collapse;font-size:.8rem;min-width:720px}
+  .cmp-tbl th{padding:11px 12px;background:var(--navy);color:#fff;font-size:.74rem;text-align:right;white-space:nowrap}
+  .cmp-tbl td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6}
+  .cmp-tbl tr:hover td{background:#f8fafb}
+  .cmp-tbl td:first-child{font-weight:700;color:var(--navy);white-space:nowrap}
+
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-thumb{background:#c3ccd4;border-radius:4px}
+  /* التحويم يعمل فقط على الأجهزة ذات المؤشر (لا يعلق على شاشات اللمس) */
+  @media (hover:hover) and (pointer:fine){
+    .opt:hover{border-color:var(--teal);background:var(--teal-l)}
+    .scen-card:hover{border-top-color:var(--gold2);box-shadow:0 14px 34px rgba(12,34,51,.14);transform:translateY(-4px)}
+    .std-card:hover{border-top-color:var(--gold2);box-shadow:0 14px 34px rgba(12,34,51,.14);transform:translateY(-4px)}
+    .pro-card:hover{border-color:var(--teal);box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+  }
+  /* بعد التسليم: لا تحويم إطلاقاً على الخيارات */
+  .opts.locked .opt,.opts.locked .opt:hover{cursor:default;border-color:var(--border);background:#fff}
+  .opts.locked .opt.ok{border-color:var(--credit-t);background:var(--credit)}
+  .opts.locked .opt.no{border-color:var(--red);background:#fdecec}
+
+  /* ═══ PRINT: الشهادة فقط ═══ */
+  @media print{
+    @page{margin:10mm}
+    html,body{background:#fff!important}
+    .sidebar,.topbar,#hero,.side-foot{display:none!important}
+    .layout{display:block!important}
+    .content{width:100%!important;min-width:0!important}
+    main{max-width:100%!important;padding:0!important;margin:0!important}
+    .panel{display:none!important}
+    #p-cert{display:block!important;animation:none!important}
+    #p-cert .card{border:none!important;box-shadow:none!important;margin:0!important;background:#fff!important;border-radius:0!important}
+    #p-cert .card-h{display:none!important}
+    #cert-content>div:first-child,#cert-content>button,#cert-content .alert{display:none!important}
+    #cert-out{margin:0!important}
+    .cert{box-shadow:none!important;margin:0 auto!important;max-width:720px;page-break-inside:avoid;break-inside:avoid;animation:none!important}
+    .cert .btn{display:none!important}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+
+</style>
+</head>
+<body>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="side-logo">
+    <div class="logo-mark">⚖</div>
+    <div>ميزان <small>MIZAN PRO</small></div>
+  </div>
+  <div class="side-nav">
+    <button class="nav-tab active" data-tab="home" onclick="go('home',this)"><span class="label">الرئيسية</span></button>
+    <button class="nav-tab" data-tab="journal" onclick="go('journal',this)"><span class="label">دفتر اليومية</span></button>
+    <button class="nav-tab" data-tab="ledger" onclick="go('ledger',this)"><span class="label">الأستاذ والميزان</span></button>
+    <button class="nav-tab" data-tab="fs" onclick="go('fs',this)"><span class="label">القوائم المالية</span></button>
+    <button class="nav-tab" data-tab="scen" onclick="go('scen',this)"><span class="label">السيناريوهات</span></button>
+    <button class="nav-tab" data-tab="std" onclick="go('std',this)"><span class="label">المعايير المحاسبية</span></button>
+    <button class="nav-tab" data-tab="pro" onclick="go('pro',this)"><span class="label">شهادات مهنية</span></button>
+    <button class="nav-tab" data-tab="tax" onclick="go('tax',this)"><span class="label">الإقرار الضريبي</span></button>
+    <button class="nav-tab" data-tab="quiz" onclick="go('quiz',this)"><span class="label">الاختبار النهائي</span></button>
+    <button class="nav-tab" data-tab="cert" onclick="go('cert',this)"><span class="label">شهادة الإتمام</span></button>
+  </div>
+  <div class="side-foot">منصة تعليمية تفاعلية<br/>للمحاسبة المالية</div>
+</aside>
+
+<div class="content">
+<header class="topbar">
+  <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+  <span class="topbar-title" id="topbar-title">الرئيسية</span>
+</header>
+
+<div class="hero" id="hero">
+  <svg class="hero-scale" viewBox="0 0 200 200" fill="none" stroke="#5eead4" stroke-width="3" stroke-linecap="round">
+    <line x1="100" y1="20" x2="100" y2="150"/>
+    <line x1="30" y1="45" x2="170" y2="45"/>
+    <circle cx="100" cy="20" r="6"/>
+    <line x1="30" y1="45" x2="18" y2="95"/><line x1="30" y1="45" x2="42" y2="95"/>
+    <path d="M10 95 A20 20 0 0 0 50 95" />
+    <line x1="170" y1="45" x2="158" y2="95"/><line x1="170" y1="45" x2="182" y2="95"/>
+    <path d="M150 95 A20 20 0 0 0 190 95" />
+    <line x1="70" y1="160" x2="130" y2="160"/>
+    <line x1="60" y1="172" x2="140" y2="172"/>
+  </svg>
+  <div class="hero-inner">
+    <h1>تعلّم المحاسبة <em>بذكاء</em></h1>
+    <p>منصة تدريبية متكاملة: سجّل قيوداً بسيطة ومركّبة، تابع دفتر الأستاذ وميزان المراجعة تلقائياً، وحُلّ سيناريوهات واقعية من عالم الأعمال.</p>
+  </div>
+</div>
+
+<main>
+
+<!-- ══════════ HOME ══════════ -->
+<div class="panel active" id="p-home">
+  <div class="card">
+    <div class="card-h">
+      <div><h2>مرحباً بك في منصة ميزان</h2><p>اختر القسم الذي تريد البدء به</p></div>
+    </div>
+    <div class="card-b">
+      <div class="std-grid">
+        <div class="std-card" onclick="go('journal')">
+          <h3>دفتر اليومية</h3>
+          <p>سجّل قيوداً محاسبية بسيطة ومركّبة بأسطر غير محدودة مع تحقق تلقائي من التوازن.</p>
+        </div>
+        <div class="std-card" onclick="go('ledger')">
+          <h3>الأستاذ والميزان</h3>
+          <p>دفتر أستاذ بحسابات T وميزان مراجعة يُبنيان تلقائياً من قيودك.</p>
+        </div>
+        <div class="std-card" onclick="go('fs')">
+          <h3>القوائم المالية</h3>
+          <p>شرح قائمة الدخل والمركز المالي والتدفقات النقدية وحقوق الملكية مع أسئلة تحدي.</p>
+        </div>
+        <div class="std-card" onclick="go('scen')">
+          <h3>السيناريوهات</h3>
+          <p>١٥ حالة عملية من عالم الأعمال بمستويات متدرجة حتى المتقدم.</p>
+        </div>
+        <div class="std-card" onclick="go('std')">
+          <h3>المعايير المحاسبية</h3>
+          <p>أهم معايير IFRS و IAS مبسّطة مع أمثلة تطبيقية واختبارات سريعة.</p>
+        </div>
+        <div class="std-card" onclick="go('pro')">
+          <h3>الشهادات المهنية</h3>
+          <p>دليل SOCPA و CPA و CMA وغيرها: المتطلبات والمدة والمسارات الوظيفية.</p>
+        </div>
+        <div class="std-card" onclick="go('tax')">
+          <h3>الإقرار الضريبي</h3>
+          <p>شرح ضريبة القيمة المضافة مع حاسبة محاكاة للإقرار وقيوده المحاسبية.</p>
+        </div>
+        <div class="std-card" onclick="go('quiz')">
+          <h3>الاختبار النهائي</h3>
+          <p>١٥ سؤال تحدي متنوعاً في المحاسبة المالية والتكاليف والمعايير والضريبة — اجتز ١١ منها لتحصل على الشهادة.</p>
+        </div>
+        <div class="std-card" onclick="go('cert')">
+          <h3>شهادة الإتمام</h3>
+          <p>شهادتك باسمك بعد اجتياز الاختبار، قابلة للطباعة ومحفوظة تلقائياً.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ JOURNAL ══════════ -->
+<div class="panel" id="p-journal">
+
+  <!-- PRACTICE PROBLEMS -->
+  <div class="card">
+    <div class="card-h">
+      <div><h2>تدرّب: مسائل قيود اليومية</h2><p>ولّد مسألة وسجّل قيدها في النموذج بالأسفل</p></div>
+    </div>
+    <div class="card-b">
+      <button class="btn btn-teal" onclick="newProblem()" style="margin-bottom:14px">ولّد مسألة محاسبية</button>
+      <div id="prob-box"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <div><h2>قيد يومية جديد</h2><p>أضف أسطراً غير محدودة من المدين والدائن — قيود بسيطة أو مركّبة</p></div>
+    </div>
+    <div class="card-b">
+      <div class="grid2">
+        <div><label>التاريخ</label><input type="date" id="e-date"/></div>
+        <div><label>البيان</label><input type="text" id="e-desc" placeholder="مثال: شراء أثاث ومعدات نقداً وبالأجل"/></div>
+      </div>
+      <div id="e-alert"></div>
+      <div class="etbl-wrap">
+        <table class="etbl">
+          <thead><tr><th style="width:85px">النوع</th><th>اسم الحساب</th><th style="width:135px">المبلغ (ر.س)</th><th style="width:44px"></th></tr></thead>
+          <tbody id="e-rows"></tbody>
+        </table>
+      </div>
+      <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:18px">
+        <button class="btn btn-debit" onclick="addRow('d')">＋ سطر مدين</button>
+        <button class="btn btn-credit" onclick="addRow('c')">＋ سطر دائن</button>
+        <button class="btn btn-ghost btn-sm" onclick="clearRows()">مسح الكل</button>
+      </div>
+      <div class="totals">
+        <div class="tbox d"><small>إجمالي المدين</small><b id="t-d">0.00</b></div>
+        <div class="tbox c"><small>إجمالي الدائن</small><b id="t-c">0.00</b></div>
+        <div class="tbox x"><small>الفرق</small><b id="t-x">0.00</b></div>
+      </div>
+      <button class="btn btn-teal btn-full" onclick="saveEntry()">✓ ترحيل القيد إلى دفتر اليومية</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <div><h2>دفتر اليومية العامة</h2><p id="j-count">لا توجد قيود بعد</p></div>
+    </div>
+    <div class="jtbl-wrap">
+      <table class="jtbl">
+        <thead><tr><th style="width:38px">م</th><th style="width:96px">التاريخ</th><th>البيان</th><th class="c" style="width:110px">مدين</th><th class="c" style="width:110px">دائن</th></tr></thead>
+        <tbody id="j-body"><tr><td colspan="5"><div class="empty">سجّل أول قيد لك من الأعلى</div></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SCENARIOS ══════════ -->
+<div class="panel" id="p-scen">
+  <div id="scen-list">
+    <div class="card">
+      <div class="card-h">
+        <div><h2>السيناريوهات المحاسبية</h2><p>حالات واقعية من عالم الأعمال — اختر السيناريو وحُلّه خطوة بخطوة</p></div>
+      </div>
+      <div class="card-b">
+        <div class="scen-grid" id="scen-grid"></div>
+      </div>
+    </div>
+  </div>
+  <div id="scen-view" style="display:none"></div>
+</div>
+
+<!-- ══════════ STANDARDS ══════════ -->
+<div class="panel" id="p-std">
+  <div id="std-list">
+    <div class="card">
+      <div class="card-h">
+        <div><h2>المعايير المحاسبية الدولية</h2><p>المعايير الدولية للتقرير المالي المعتمدة في المملكة — وفق طبعة 2026 الصادرة من الهيئة السعودية للمراجعين والمحاسبين، مع بيان تعديلات الهيئة على كل معيار</p></div>
+      </div>
+      <div class="card-b">
+        <div class="std-grid" id="std-grid"></div>
+      </div>
+    </div>
+  </div>
+  <div id="std-view" style="display:none"></div>
+</div>
+
+<!-- ══════════ PRO CERTS ══════════ -->
+<div class="panel" id="p-pro">
+  <div id="pro-list">
+    <div class="card">
+      <div class="card-h">
+        <div><h2>الشهادات المهنية في المحاسبة</h2><p>دليلك لأشهر الشهادات المحاسبية عالمياً ومحلياً — المتطلبات، المدة، ومجالات العمل</p></div>
+      </div>
+      <div class="card-b">
+        <div class="pro-grid" id="pro-grid"></div>
+        <h3 style="font-size:.95rem;font-weight:700;margin:28px 0 12px;color:var(--navy)">مقارنة سريعة بين الشهادات</h3>
+        <div class="jtbl-wrap">
+          <table class="cmp-tbl">
+            <thead><tr><th>الشهادة</th><th>التخصص</th><th>المدة التقريبية</th><th>عدد الاختبارات</th><th>الأنسب لـ</th></tr></thead>
+            <tbody>
+              <tr><td>SOCPA</td><td>مراجعة وترخيص مهني سعودي</td><td>1–3 سنوات</td><td>عدة اختبارات زمالة</td><td>الترخيص والعمل داخل السعودية</td></tr>
+              <tr><td>CPA</td><td>محاسبة مالية ومراجعة</td><td>12–18 شهراً</td><td>4 أقسام</td><td>الشركات العالمية وBig 4</td></tr>
+              <tr><td>CMA</td><td>محاسبة إدارية وتحليل</td><td>8–16 شهراً</td><td>جزءان</td><td>التحليل المالي داخل الشركات</td></tr>
+              <tr><td>ACCA</td><td>محاسبة شاملة على IFRS</td><td>2–4 سنوات</td><td>حتى 13 ورقة</td><td>شهادة دولية بمعايير IFRS</td></tr>
+              <tr><td>CIA</td><td>مراجعة داخلية وحوكمة</td><td>8–14 شهراً</td><td>3 أجزاء</td><td>المراجعة الداخلية وGRC</td></tr>
+              <tr><td>CFA</td><td>تحليل مالي واستثمار</td><td>2.5–4 سنوات</td><td>3 مستويات</td><td>الاستثمار وإدارة المحافظ</td></tr>
+              <tr><td>CertIFR</td><td>معايير IFRS</td><td>2–4 أشهر</td><td>اختبار واحد</td><td>بداية سريعة أو مكمّل</td></tr>
+              <tr><td>CFE</td><td>كشف الاحتيال المالي</td><td>4–9 أشهر</td><td>4 أقسام</td><td>التحقيق المالي والامتثال</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="pro-view" style="display:none"></div>
+</div>
+
+<!-- ══════════ LEDGER ══════════ -->
+<div class="panel" id="p-ledger">
+  <div class="card">
+    <div class="card-h">
+      <div><h2>دفتر الأستاذ (حسابات T)</h2><p>يُبنى تلقائياً من قيود اليومية المسجّلة — كل حساب برصيده</p></div>
+    </div>
+    <div class="card-b" id="ledger-content"></div>
+  </div>
+  <div class="card">
+    <div class="card-h">
+      <div><h2>ميزان المراجعة بالأرصدة</h2><p>يتحقق تلقائياً من توازن مجاميع الأرصدة المدينة والدائنة</p></div>
+    </div>
+    <div class="jtbl-wrap" id="tb-content"></div>
+  </div>
+</div>
+
+<!-- ══════════ TAX ══════════ -->
+<div class="panel" id="p-tax">
+  <div class="card">
+    <div class="card-h">
+      <div><h2>الإقرار الضريبي — ضريبة القيمة المضافة</h2><p>شرح مبسّط لإقرار ضريبة القيمة المضافة في السعودية مع محاكاة عملية</p></div>
+    </div>
+    <div class="card-b">
+
+      <div class="std-section"><h4>ما هو الإقرار الضريبي؟</h4>
+        <p>الإقرار الضريبي هو نموذج دوري تقدّمه المنشأة المسجّلة في ضريبة القيمة المضافة إلى <b>هيئة الزكاة والضريبة والجمارك (ZATCA)</b>، تُفصح فيه عن مبيعاتها ومشترياتها خلال الفترة الضريبية، وتحسب صافي الضريبة المستحقة عليها (أو المستردة لها). نسبة الضريبة الأساسية في السعودية <b>15٪</b>.</p>
+      </div>
+
+      <div class="std-section"><h4>المفاهيم الأساسية</h4>
+        <ul>
+          <li><b>ضريبة المخرجات:</b> الضريبة التي تحصّلها المنشأة من عملائها على مبيعاتها الخاضعة (المبيعات × 15٪).</li>
+          <li><b>ضريبة المدخلات:</b> الضريبة التي دفعتها المنشأة لمورّديها على مشترياتها ومصروفاتها الخاضعة، ويحق لها خصمها.</li>
+          <li><b>صافي الضريبة = ضريبة المخرجات − ضريبة المدخلات.</b> إذا كان موجباً تسدّده المنشأة للهيئة، وإذا كان سالباً يحق لها استرداده أو ترحيله.</li>
+          <li><b>التوريدات الصفرية (0٪):</b> مثل الصادرات خارج دول المجلس والأدوية المؤهلة — تُذكر في الإقرار لكن ضريبتها صفر مع بقاء حق خصم المدخلات.</li>
+          <li><b>التوريدات المعفاة:</b> مثل بعض الخدمات المالية وتأجير العقار السكني — لا تُفرض عليها ضريبة ولا يُخصم ما يخصها من مدخلات.</li>
+        </ul>
+      </div>
+
+      <div class="std-section"><h4>الفترات الضريبية ومواعيد التقديم</h4>
+        <ul>
+          <li>المنشآت التي تتجاوز إيراداتها السنوية <b>40 مليون ريال</b>: إقرار <b>شهري</b>.</li>
+          <li>المنشآت الأقل من ذلك: إقرار <b>ربع سنوي</b> (كل 3 أشهر).</li>
+          <li>آخر موعد للتقديم والسداد: <b>نهاية الشهر التالي</b> لانتهاء الفترة الضريبية.</li>
+          <li>التأخر في التقديم أو السداد يعرّض المنشأة لغرامات نظامية.</li>
+        </ul>
+      </div>
+
+      <div class="std-section"><h4>خطوات تعبئة الإقرار</h4>
+        <ul>
+          <li>١) تسجيل الدخول لبوابة الهيئة (zatca.gov.sa) واختيار الإقرار المستحق.</li>
+          <li>٢) إدخال المبيعات الخاضعة للنسبة الأساسية 15٪ وضريبتها.</li>
+          <li>٣) إدخال المبيعات الصفرية والمعفاة والصادرات (إن وجدت).</li>
+          <li>٤) إدخال المشتريات الخاضعة وضريبة مدخلاتها القابلة للخصم.</li>
+          <li>٥) مراجعة صافي الضريبة المحسوب تلقائياً، ثم التقديم والسداد عبر سداد.</li>
+        </ul>
+      </div>
+
+      <div class="std-section"><h4>القيود المحاسبية للضريبة</h4>
+        <div class="std-example">
+          <b>مثال — قيد بيع بضاعة بـ 10,000 + ضريبة 15٪ نقداً:</b>
+من ح/ الصندوق 11,500
+&nbsp;&nbsp;&nbsp;&nbsp;إلى ح/ المبيعات 10,000
+&nbsp;&nbsp;&nbsp;&nbsp;إلى ح/ ضريبة القيمة المضافة — مخرجات 1,500
+
+<b>مثال — قيد شراء بضاعة بـ 6,000 + ضريبة 15٪ بالأجل:</b>
+من مذكورين:
+&nbsp;&nbsp;&nbsp;&nbsp;ح/ المشتريات 6,000
+&nbsp;&nbsp;&nbsp;&nbsp;ح/ ضريبة القيمة المضافة — مدخلات 900
+&nbsp;&nbsp;&nbsp;&nbsp;إلى ح/ الموردين 6,900
+
+<b>قيد التسوية عند تقديم الإقرار (سداد الصافي):</b>
+من ح/ ضريبة مخرجات 1,500
+&nbsp;&nbsp;&nbsp;&nbsp;إلى مذكورين: ح/ ضريبة مدخلات 900 + ح/ البنك 600</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- VAT SIMULATOR -->
+  <div class="card">
+    <div class="card-h">
+      <div><h2>محاكاة الإقرار الضريبي</h2><p>أدخل أرقام الفترة واحصل على صافي الضريبة فوراً — تماماً كنموذج الهيئة</p></div>
+    </div>
+    <div class="card-b">
+      <div class="grid2">
+        <div><label>المبيعات الخاضعة للنسبة الأساسية 15٪ (بدون ضريبة)</label><input type="number" min="0" id="vat-sales" placeholder="0" oninput="calcVat()"/></div>
+        <div><label>المبيعات الصفرية / الصادرات (0٪)</label><input type="number" min="0" id="vat-zero" placeholder="0" oninput="calcVat()"/></div>
+        <div><label>المبيعات المعفاة</label><input type="number" min="0" id="vat-exempt" placeholder="0" oninput="calcVat()"/></div>
+        <div><label>المشتريات الخاضعة 15٪ القابلة للخصم (بدون ضريبة)</label><input type="number" min="0" id="vat-purch" placeholder="0" oninput="calcVat()"/></div>
+      </div>
+      <div class="totals">
+        <div class="tbox d"><small>ضريبة المخرجات (15٪)</small><b id="vat-out">0.00</b></div>
+        <div class="tbox c"><small>ضريبة المدخلات (15٪)</small><b id="vat-in">0.00</b></div>
+        <div class="tbox x"><small id="vat-net-label">صافي الضريبة</small><b id="vat-net">0.00</b></div>
+      </div>
+      <div id="vat-msg"></div>
+    </div>
+  </div>
+
+  <!-- TAX QUIZ -->
+  <div class="card">
+    <div class="card-h">
+      <div><h2>اختبر فهمك للإقرار الضريبي</h2></div>
+    </div>
+    <div class="card-b" id="tax-quiz"></div>
+  </div>
+</div>
+
+<!-- ══════════ FINANCIAL STATEMENTS ══════════ -->
+<div class="panel" id="p-fs">
+  <div id="fs-list">
+    <div class="card">
+      <div class="card-h">
+        <div><h2>القوائم المالية</h2><p>شرح مفصّل لكل قائمة مالية مع مكوناتها وأمثلتها واختبار صعب لكل قائمة</p></div>
+      </div>
+      <div class="card-b">
+        <div class="std-grid" id="fs-grid"></div>
+      </div>
+    </div>
+  </div>
+  <div id="fs-view" style="display:none"></div>
+</div>
+
+<!-- ══════════ QUIZ ══════════ -->
+<div class="panel" id="p-quiz">
+  <div class="card">
+    <div class="card-h">
+      <div><h2>الاختبار النهائي</h2><p>١٥ سؤال تحدي متنوعاً وصعباً — تحتاج ١١ إجابة صحيحة على الأقل للحصول على الشهادة</p></div>
+    </div>
+    <div class="card-b" id="quiz-content"></div>
+  </div>
+</div>
+
+<!-- ══════════ CERT ══════════ -->
+<div class="panel" id="p-cert">
+  <div class="card">
+    <div class="card-h">
+      <div><h2>شهادة الإتمام</h2><p>تُمنح بعد اجتياز الاختبار النهائي</p></div>
+    </div>
+    <div class="card-b" id="cert-content"></div>
+  </div>
+</div>
+
+</main>
+</div><!-- /content -->
+</div><!-- /layout -->
+
+<script>
+/* ═══════════ STATE ═══════════ */
+let entries=[], rowId=0, quizAns={}, quizDone=false, quizPass=false;
+let solvedScen=new Set();
+
+/* ═══════════ NAV ═══════════ */
+function go(tab,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('p-'+tab).classList.add('active');
+  const btn=(el&&el.classList?el:document.querySelector(`[data-tab="${tab}"]`));
+  btn.classList.add('active');
+  const t=document.getElementById('topbar-title');
+  if(t)t.textContent=btn.querySelector('.label')?.textContent||'';
+  document.getElementById('sidebar').classList.remove('open');
+  const hero=document.getElementById('hero');
+  if(hero)hero.style.display=(tab==='home')?'':'none';
+  window.scrollTo({top:0});
+  if(tab==='quiz')renderQuiz();
+  if(tab==='cert')renderCert();
+  if(tab==='scen')renderScenGrid();
+  if(tab==='std')renderStdGrid();
+  if(tab==='pro')renderProGrid();
+  if(tab==='ledger')renderLedger();
+  if(tab==='fs')renderFsGrid();
+  if(tab==='tax')renderTaxQuiz();
+}
+
+/* ═══════════ JOURNAL ═══════════ */
+const fmt=n=>n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function addRow(t){
+  const id=++rowId, tb=document.getElementById('e-rows');
+  const tr=document.createElement('tr');
+  tr.className=t==='d'?'r-debit':'r-credit'; tr.id='r'+id;
+  tr.innerHTML=`
+    <td style="text-align:center"><span class="tag ${t==='d'?'tag-d':'tag-c'}">${t==='d'?'من ح/':'إلى ح/'}</span></td>
+    <td><input type="text" class="acc" placeholder="${t==='d'?'اسم الحساب المدين':'اسم الحساب الدائن'}" oninput="calc()"/></td>
+    <td><input type="number" min="0" step="0.01" class="amt" placeholder="0.00" style="text-align:center" oninput="calc()"/></td>
+    <td style="text-align:center"><button class="btn btn-danger btn-sm" onclick="rmRow(${id})">✕</button></td>`;
+  tb.appendChild(tr); calc();
+}
+function rmRow(id){document.getElementById('r'+id)?.remove();calc();}
+function clearRows(){document.getElementById('e-rows').innerHTML='';calc();}
+
+function calc(){
+  let d=0,c=0;
+  document.querySelectorAll('#e-rows tr').forEach(tr=>{
+    const a=parseFloat(tr.querySelector('.amt')?.value)||0;
+    tr.classList.contains('r-debit')?d+=a:c+=a;
+  });
+  document.getElementById('t-d').textContent=fmt(d);
+  document.getElementById('t-c').textContent=fmt(c);
+  const x=document.getElementById('t-x');
+  x.textContent=fmt(Math.abs(d-c));
+  x.className=(Math.abs(d-c)<.005&&d>0)?'ok':(d||c)?'err':'';
+}
+
+function eAlert(msg,type){
+  const el=document.getElementById('e-alert');
+  el.innerHTML=`<div class="alert a-${type}">${msg}</div>`;
+  setTimeout(()=>el.innerHTML='',4200);
+}
+
+function saveEntry(){
+  const date=document.getElementById('e-date').value,
+        desc=document.getElementById('e-desc').value.trim();
+  const rows=[]; let d=0,c=0;
+  document.querySelectorAll('#e-rows tr').forEach(tr=>{
+    const acc=tr.querySelector('.acc').value.trim(),
+          amt=parseFloat(tr.querySelector('.amt').value)||0,
+          isD=tr.classList.contains('r-debit');
+    if(acc&&amt>0){rows.push({t:isD?'d':'c',acc,amt});isD?d+=amt:c+=amt;}
+  });
+  if(!date)return eAlert('حدد التاريخ أولاً','err');
+  if(!desc)return eAlert('اكتب البيان','err');
+  if(!rows.some(r=>r.t==='d')||!rows.some(r=>r.t==='c'))return eAlert('القيد يحتاج طرفاً مديناً وطرفاً دائناً على الأقل','err');
+  if(Math.abs(d-c)>.005)return eAlert(`القيد غير متوازن! المدين ${fmt(d)} ≠ الدائن ${fmt(c)}`,'err');
+  entries.push({date,desc,rows});
+  renderJournal(); eAlert('تم ترحيل القيد بنجاح','ok');
+  clearRows(); document.getElementById('e-desc').value='';
+  addRow('d');addRow('c');
+  {const el=document.getElementById('hs-entries');if(el)el.textContent=entries.length;}
+  saveState();
+}
+
+function renderJournal(){
+  const tb=document.getElementById('j-body');
+  document.getElementById('j-count').textContent=entries.length?`${entries.length} قيد مسجّل`:'لا توجد قيود بعد';
+  if(!entries.length){tb.innerHTML='<tr><td colspan="5"><div class="empty">سجّل أول قيد لك من الأعلى</div></td></tr>';return;}
+  let h='';
+  entries.forEach((e,i)=>{
+    const all=[...e.rows.filter(r=>r.t==='d'),...e.rows.filter(r=>r.t==='c')];
+    all.forEach((r,j)=>{
+      h+=`<tr class="${r.t==='c'?'jrow-c':''}">
+        <td>${j===0?i+1:''}</td>
+        <td style="font-size:.79rem;color:var(--ink3)">${j===0?e.date:''}</td>
+        <td>${r.t==='d'?`<b>من ح/ ${r.acc}</b>`:`إلى ح/ ${r.acc}`}${j===0?`<div style="font-size:.76rem;color:var(--ink3);margin-top:2px">${e.desc}</div>`:''}</td>
+        <td class="jd">${r.t==='d'?fmt(r.amt):''}</td>
+        <td class="jc">${r.t==='c'?fmt(r.amt):''}</td></tr>`;
+    });
+    if(i<entries.length-1)h+=`<tr class="jdiv"><td colspan="5">• • •</td></tr>`;
+  });
+  tb.innerHTML=h;
+}
+
+/* ═══════════ SCENARIOS ═══════════ */
+const scenarios=[
+  {
+    id:0, lvl:1, lvlName:'مبتدئ', title:'افتتاح متجر البركة',
+    brief:'قيد بداية النشاط التجاري',
+    story:'قرر أحمد افتتاح متجر "البركة"، فأودع 100,000 ريال من ماله الخاص في الحساب البنكي للمتجر كرأس مال، وأودع أيضاً 5,000 ريال في صندوق المتجر نقداً من ماله الخاص.',
+    q:'ما القيد الصحيح لإثبات رأس المال كاملاً؟',
+    opts:[
+      'من ح/ البنك 105,000 — إلى ح/ رأس المال 105,000',
+      'من مذكورين: ح/ البنك 100,000 + ح/ الصندوق 5,000 — إلى ح/ رأس المال 105,000',
+      'من مذكورين: ح/ البنك 100,000 + ح/ الصندوق 5,000 — إلى ح/ جاري المالك 105,000'
+    ],
+    correct:1,
+    explain:'المال دخل في حسابين مختلفين (بنك وصندوق) فلا يصح دمجهما في البنك وحده. والمصدر هنا رأس مال دائم لبدء النشاط، لا حساباً جارياً للمالك الذي يُستخدم للحركات المؤقتة.'
+  },
+  {
+    id:1, lvl:2, lvlName:'متوسط', title:'شراء سيارة التوصيل',
+    brief:'قيد مركّب مع مصاريف اقتناء',
+    story:'اشترى المتجر سيارة توصيل بـ76,000 ريال، ودفع رسوم نقل ملكية وتسجيل 4,000 ريال. سدّد 30,000 بشيك والباقي على الحساب لدى المعرض.',
+    q:'ما القيد الصحيح؟',
+    opts:[
+      'من ح/ السيارات 80,000 — إلى مذكورين: ح/ البنك 30,000 + ح/ الدائنين 50,000',
+      'من ح/ السيارات 76,000 — إلى مذكورين: ح/ البنك 30,000 + ح/ الدائنين 46,000',
+      'من مذكورين: ح/ السيارات 76,000 + ح/ مصاريف التسجيل 4,000 — إلى مذكورين: ح/ البنك 30,000 + ح/ الدائنين 50,000'
+    ],
+    correct:0,
+    explain:'رسوم التسجيل ضرورية لجعل الأصل جاهزاً للاستخدام فتُرسمل ضمن تكلفته (76,000+4,000=80,000) ولا تُعالج مصروفاً مستقلاً. المدفوع بشيك 30,000 والباقي 50,000 التزام.'
+  },
+  {
+    id:2, lvl:1, lvlName:'مبتدئ', title:'شراء بضاعة بالأجل',
+    brief:'التمييز بين المشتريات والأصول',
+    story:'اشترى المتجر مواد غذائية بغرض إعادة بيعها بـ25,000 ريال من مؤسسة الوفاء بالأجل، واشترى في نفس اليوم ثلاجة عرض لاستخدام المتجر بـ7,000 ريال نقداً.',
+    q:'ما المعالجة الصحيحة للعمليتين؟',
+    opts:[
+      'من ح/ المشتريات 32,000 — إلى مذكورين: ح/ الموردين 25,000 + ح/ الصندوق 7,000',
+      'قيدان: من ح/ المشتريات 25,000 إلى ح/ الموردين 25,000 • ومن ح/ الأثاث والمعدات 7,000 إلى ح/ الصندوق 7,000',
+      'قيدان: من ح/ البضاعة 25,000 إلى ح/ الموردين 25,000 • ومن ح/ المشتريات 7,000 إلى ح/ الصندوق 7,000'
+    ],
+    correct:1,
+    explain:'البضاعة المعدّة للبيع تُقيّد في المشتريات، أما الثلاجة فأصل ثابت للاستخدام (معدات) وليست مشتريات — دمجهما في حساب واحد يخلط بين المصروف والأصل ويشوّه قائمة الدخل.'
+  },
+  {
+    id:3, lvl:2, lvlName:'متوسط', title:'بيع نقدي وبالأجل معاً',
+    brief:'قيد مركّب من مذكورين',
+    story:'باع المتجر بضاعة بـ40,000 ريال: حصّل 15,000 نقداً في الصندوق، وقبل شيكاً بـ10,000 أودعه البنك فوراً، والباقي 15,000 على حساب العميل.',
+    q:'ما القيد الصحيح؟',
+    opts:[
+      'من مذكورين: ح/ الصندوق 25,000 + ح/ العملاء 15,000 — إلى ح/ المبيعات 40,000',
+      'من مذكورين: ح/ الصندوق 15,000 + ح/ البنك 10,000 + ح/ العملاء 15,000 — إلى ح/ المبيعات 40,000',
+      'من مذكورين: ح/ الصندوق 15,000 + ح/ أوراق القبض 10,000 + ح/ العملاء 15,000 — إلى ح/ المبيعات 40,000'
+    ],
+    correct:1,
+    explain:'الشيك المودع فوراً يُقيّد في البنك مباشرة، لا في الصندوق ولا في أوراق القبض (التي تخص الكمبيالات والسندات لا الشيكات المحصّلة). ثلاثة أطراف مدينة مقابل المبيعات.'
+  },
+  {
+    id:4, lvl:3, lvlName:'متقدم', title:'رواتب مع استقطاعات',
+    brief:'قيد مركّب متعدد الأطراف',
+    story:'استحقت رواتب الموظفين 60,000 ريال. استُقطع 6,000 للتأمينات (حصة الموظف)، و2,000 سلفة سبق صرفها لموظف، وصُرف الصافي 52,000 بشيكات.',
+    q:'ما القيد الصحيح؟',
+    opts:[
+      'من ح/ الرواتب 60,000 — إلى مذكورين: ح/ البنك 52,000 + ح/ التأمينات المستحقة 6,000 + ح/ سلف الموظفين 2,000',
+      'من ح/ الرواتب 52,000 — إلى ح/ البنك 52,000',
+      'من مذكورين: ح/ الرواتب 60,000 + ح/ سلف الموظفين 2,000 — إلى مذكورين: ح/ البنك 54,000 + ح/ التأمينات المستحقة 6,000 + ح/ سلف الموظفين 2,000'
+    ],
+    correct:0,
+    explain:'مصروف الرواتب يُثبت بكامل الاستحقاق 60,000. السلفة سبق قيدها مدينة عند صرفها، فتُقفل الآن دائنة (استردادها من الراتب) — جعلها مدينة مرة أخرى يضاعفها. والخيار الثاني يبخس المصروف.'
+  },
+  {
+    id:5, lvl:3, lvlName:'متقدم', title:'إهلاك نهاية السنة',
+    brief:'إهلاك أصل مشترى أثناء السنة',
+    story:'اشترت المنشأة سيارة بـ80,000 ريال في 1/4 (بداية الربع الثاني)، بقسط ثابت 20٪ سنوياً بلا قيمة تخريدية. نحتسب إهلاك السنة الأولى في 31/12.',
+    q:'ما قيد الإهلاك الصحيح؟',
+    opts:[
+      'من ح/ مصروف الإهلاك 16,000 — إلى ح/ مجمع إهلاك السيارات 16,000',
+      'من ح/ مصروف الإهلاك 12,000 — إلى ح/ مجمع إهلاك السيارات 12,000',
+      'من ح/ مصروف الإهلاك 12,000 — إلى ح/ السيارات 12,000'
+    ],
+    correct:1,
+    explain:'الأصل استُخدم 9 أشهر فقط (من 1/4 إلى 31/12): 80,000×20٪×(9÷12)=12,000. احتساب سنة كاملة يضخّم المصروف، والتخفيض المباشر من الأصل بدل مجمع الإهلاك يخفي التكلفة التاريخية.'
+  },
+  {
+    id:6, lvl:3, lvlName:'متقدم', title:'بيع أصل ثابت',
+    brief:'استبعاد أصل مع إهلاك سنة البيع',
+    story:'آلة تكلفتها 100,000 ومجمع إهلاكها 60,000 في 1/1. إهلاكها السنوي 10,000. بيعت في 30/6 بـ33,000 نقداً بعد إثبات إهلاك نصف السنة.',
+    q:'ما قيد الاستبعاد الصحيح (بعد قيد إهلاك النصف سنة)؟',
+    opts:[
+      'من مذكورين: ح/ البنك 33,000 + ح/ مجمع الإهلاك 60,000 + ح/ خسارة بيع أصل 7,000 — إلى ح/ الآلات 100,000',
+      'من مذكورين: ح/ البنك 33,000 + ح/ مجمع الإهلاك 65,000 + ح/ خسارة بيع أصل 2,000 — إلى ح/ الآلات 100,000',
+      'من مذكورين: ح/ البنك 33,000 + ح/ مجمع الإهلاك 65,000 — إلى مذكورين: ح/ الآلات 100,000 — وربح بيع أصل 2,000'
+    ],
+    correct:1,
+    explain:'بعد إهلاك نصف السنة (5,000) يصبح المجمع 65,000 والقيمة الدفترية 35,000. البيع بـ33,000 يحقق خسارة 2,000 (مدينة). تجاهل إهلاك سنة البيع (الخيار الأول) خطأ شائع يضخّم الخسارة.'
+  },
+  {
+    id:7, lvl:3, lvlName:'متقدم', title:'إيراد مقبوض مقدماً',
+    brief:'التسوية حسب تاريخ القبض',
+    story:'حصّلت شركة إيجارات 60,000 ريال في 1/10 عن سنة كاملة تبدأ من 1/11 (وليس من تاريخ القبض). في 31/12 نجري التسوية.',
+    q:'ما قيد التسوية الصحيح في 31/12؟',
+    opts:[
+      'من ح/ إيرادات مقبوضة مقدماً 15,000 — إلى ح/ إيراد الإيجار 15,000',
+      'من ح/ إيرادات مقبوضة مقدماً 10,000 — إلى ح/ إيراد الإيجار 10,000',
+      'من ح/ إيراد الإيجار 10,000 — إلى ح/ إيرادات مقبوضة مقدماً 10,000'
+    ],
+    correct:1,
+    explain:'العقد يبدأ من 1/11 لا من تاريخ القبض، فالمكتسب حتى 31/12 شهران فقط = 60,000×(2÷12)=10,000. الحساب من 1/10 (ثلاثة أشهر) فخ التاريخ الشائع، وعكس الطرفين يزيد الالتزام بدل تخفيضه.'
+  },
+  {
+    id:8, lvl:3, lvlName:'متقدم', title:'مصروفات مستحقة',
+    brief:'الفصل بين المدفوع والمستحق',
+    story:'إيجار المنشأة 5,000 ريال شهرياً. دفعت خلال السنة 55,000 ريال فقط (11 شهراً) وبقي إيجار ديسمبر غير مدفوع حتى 31/12.',
+    q:'ما قيد التسوية الصحيح في 31/12؟',
+    opts:[
+      'من ح/ مصروف الإيجار 60,000 — إلى ح/ إيجار مستحق الدفع 60,000',
+      'من ح/ مصروف الإيجار 5,000 — إلى ح/ إيجار مستحق الدفع 5,000',
+      'من ح/ إيجار مستحق الدفع 5,000 — إلى ح/ مصروف الإيجار 5,000'
+    ],
+    correct:1,
+    explain:'المدفوع 55,000 سبق إثباته أولاً بأول؛ التسوية تخص الشهر غير المدفوع فقط (5,000) لإيصال المصروف إلى 60,000 كاملة. قيد 60,000 يضاعف ما سبق تسجيله.'
+  },
+  {
+    id:9, lvl:3, lvlName:'متقدم', title:'مخصص الديون المشكوك فيها',
+    brief:'مخصص مع رصيد سابق',
+    story:'رصيد العملاء 500,000 ريال، والسياسة تكوين مخصص 4٪. يوجد رصيد مخصص سابق (دائن) 8,000 ريال من السنة الماضية.',
+    q:'ما قيد التسوية الصحيح؟',
+    opts:[
+      'من ح/ مصروف الديون المشكوك فيها 20,000 — إلى ح/ مخصص الديون المشكوك فيها 20,000',
+      'من ح/ مصروف الديون المشكوك فيها 12,000 — إلى ح/ مخصص الديون المشكوك فيها 12,000',
+      'من ح/ مصروف الديون المشكوك فيها 28,000 — إلى ح/ مخصص الديون المشكوك فيها 28,000'
+    ],
+    correct:1,
+    explain:'المخصص المطلوب 500,000×4٪=20,000، والموجود 8,000، فالمصروف هو الفرق فقط 12,000. تجاهل الرصيد السابق (20,000) أو جمعه بدل طرحه (28,000) أخطاء شائعة.'
+  },
+  {
+    id:10, lvl:3, lvlName:'متقدم', title:'مردودات مبيعات',
+    brief:'مردود بعد تحصيل جزئي',
+    story:'باعت المنشأة بضاعة بـ50,000 بالأجل، ثم حصّلت 30,000 من العميل نقداً. بعدها ردّ العميل بضاعة معيبة بـ8,000، فأعادت له 3,000 نقداً وخصمت الباقي من رصيده.',
+    q:'ما قيد إثبات المردودات؟',
+    opts:[
+      'من ح/ مردودات المبيعات 8,000 — إلى ح/ العملاء 8,000',
+      'من ح/ مردودات المبيعات 8,000 — إلى مذكورين: ح/ الصندوق 3,000 + ح/ العملاء 5,000',
+      'من ح/ المبيعات 8,000 — إلى مذكورين: ح/ الصندوق 3,000 + ح/ العملاء 5,000'
+    ],
+    correct:1,
+    explain:'الرد تم بطريقتين: نقداً 3,000 ومن الرصيد 5,000، فالدائن مذكورين لا العملاء وحدهم. وتُستخدم مردودات المبيعات (حساب مقابل) لا تخفيض المبيعات مباشرة حفاظاً على الإفصاح.'
+  },
+  {
+    id:11, lvl:3, lvlName:'متقدم', title:'خصم نقدي مكتسب',
+    brief:'خصم بعد مردودات مشتريات',
+    story:'اشترت المنشأة بضاعة بـ30,000 بشرط 2/10 ن/30، ثم ردّت منها بضاعة بـ4,000 قبل السداد. سدّدت الباقي خلال فترة الخصم بشيك.',
+    q:'ما قيد السداد الصحيح؟',
+    opts:[
+      'من ح/ الموردين 26,000 — إلى مذكورين: ح/ البنك 25,480 + ح/ الخصم المكتسب 520',
+      'من ح/ الموردين 30,000 — إلى مذكورين: ح/ البنك 29,400 + ح/ الخصم المكتسب 600',
+      'من ح/ الموردين 26,000 — إلى مذكورين: ح/ البنك 25,400 + ح/ الخصم المكتسب 600'
+    ],
+    correct:0,
+    explain:'الخصم يُحسب على الرصيد بعد المردودات: (30,000−4,000)×2٪=520، والمدفوع 25,480. حساب الخصم على المبلغ الأصلي (600) قبل استبعاد المردود هو الفخ.'
+  },
+  {
+    id:12, lvl:3, lvlName:'متقدم', title:'قرض بفائدة',
+    brief:'فائدة مستحقة عن جزء من السنة',
+    story:'اقترضت المنشأة 200,000 ريال في 1/9 بفائدة سنوية 6٪ تُدفع مع أصل القرض بعد سنة. في 31/12 نُثبت فائدة الفترة.',
+    q:'ما قيد التسوية الصحيح؟',
+    opts:[
+      'من ح/ مصروف الفوائد 4,000 — إلى ح/ فوائد مستحقة الدفع 4,000',
+      'من ح/ مصروف الفوائد 4,000 — إلى ح/ البنك 4,000',
+      'من ح/ مصروف الفوائد 6,000 — إلى ح/ فوائد مستحقة الدفع 6,000'
+    ],
+    correct:0,
+    explain:'من 1/9 إلى 31/12 أربعة أشهر: 200,000×6٪×(4÷12)=4,000. الفائدة لم تُدفع بعد (تُدفع مع الأصل) فالدائن التزام مستحق لا البنك. وستة أشهر (6,000) حساب خاطئ للمدة.'
+  },
+  {
+    id:13, lvl:3, lvlName:'متقدم', title:'تكلفة البضاعة المباعة',
+    brief:'مع مردودات ومسموحات ونقل',
+    story:'بضاعة أول المدة 40,000، مشتريات 150,000، مردودات ومسموحات مشتريات 12,000، مصاريف نقل للمشتريات 7,000، مصاريف نقل للمبيعات 5,000، بضاعة آخر المدة 35,000.',
+    q:'كم تكلفة البضاعة المباعة؟',
+    opts:[
+      '150,000 ريال',
+      '155,000 ريال',
+      '145,000 ريال'
+    ],
+    correct:0,
+    explain:'صافي المشتريات = 150,000−12,000+7,000 (نقل المشتريات فقط) = 145,000. التكلفة = 40,000+145,000−35,000 = 150,000. إدخال نقل المبيعات (مصروف بيعي) في المعادلة هو الفخ.'
+  },
+  {
+    id:14, lvl:3, lvlName:'متقدم', title:'تحليل السيولة',
+    brief:'نسبة التداول والسيولة السريعة',
+    story:'أصول متداولة 320,000 (منها مخزون 120,000 ومصروفات مدفوعة مقدماً 20,000)، والتزامات متداولة 200,000.',
+    q:'كم نسبة التداول ونسبة السيولة السريعة؟',
+    opts:[
+      'التداول 1.6 والسريعة 1.0',
+      'التداول 1.6 والسريعة 0.9',
+      'التداول 1.6 والسريعة 1.6'
+    ],
+    correct:1,
+    explain:'التداول = 320÷200 = 1.6. السريعة تستبعد المخزون والمدفوع مقدماً: (320−120−20)÷200 = 180÷200 = 0.9. استبعاد المخزون فقط دون المدفوع مقدماً يعطي 1.0 — الفخ الشائع.'
+  }
+];
+
+function renderScenGrid(){
+  const g=document.getElementById('scen-grid');
+  document.getElementById('scen-list').style.display='';
+  document.getElementById('scen-view').style.display='none';
+  g.innerHTML=scenarios.map(s=>`
+    <div class="scen-card" onclick="openScen(${s.id})">
+      ${solvedScen.has(s.id)?'<span class="done">✓</span>':''}
+      <span class="lvl lvl-${s.lvl}">${s.lvlName}</span>
+      <h3>${s.title}</h3>
+      <p>${s.brief}</p>
+    </div>`).join('');
+  {const el=document.getElementById('hs-scen');if(el)el.textContent=solvedScen.size+'/15';}
+}
+
+let scenPick=null;
+function openScen(id){
+  const s=scenarios[id]; scenPick=null;
+  document.getElementById('scen-list').style.display='none';
+  const v=document.getElementById('scen-view');
+  v.style.display='';
+  v.innerHTML=`
+    <div class="scen-detail">
+      <div class="scen-head">
+        <button class="btn btn-ghost btn-sm" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3);margin-bottom:14px" onclick="renderScenGrid()">→ رجوع للسيناريوهات</button>
+        <h3>${s.title}</h3>
+        <p>مستوى: ${s.lvlName}</p>
+      </div>
+      <div class="scen-body">
+        <div class="scen-story">${s.story}</div>
+        <h3 style="font-size:.95rem;font-weight:700;margin-bottom:12px">${s.q}</h3>
+        <div class="opts" id="scen-opts">
+          ${s.opts.map((o,i)=>`
+            <label class="opt" id="so-${i}">
+              <input type="radio" name="scen" onchange="scenPick=${i}"/>
+              <span style="direction:rtl">${o}</span>
+            </label>`).join('')}
+        </div>
+        <div id="scen-result" style="margin-top:16px"></div>
+        <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+          <button class="btn btn-teal" onclick="checkScen(${id})">تحقق من الإجابة ✓</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function checkScen(id){
+  const s=scenarios[id], r=document.getElementById('scen-result');
+  if(scenPick===null){r.innerHTML='<div class="alert a-err">اختر إجابة أولاً.</div>';return;}
+  document.querySelectorAll('#scen-opts .opt').forEach((el,i)=>{
+    el.classList.remove('ok','no');
+    if(i===s.correct)el.classList.add('ok');
+    else if(i===scenPick)el.classList.add('no');
+  });
+  if(scenPick===s.correct){
+    solvedScen.add(id);
+    r.innerHTML=`<div class="alert a-ok"><b>إجابة صحيحة!</b><br/>${s.explain}</div>`;
+  }else{
+    r.innerHTML=`<div class="alert a-err"><b>إجابة غير صحيحة.</b><br/>${s.explain}</div>`;
+  }
+  {const el=document.getElementById('hs-scen');if(el)el.textContent=solvedScen.size+'/15';}
+  saveState();
+}
+
+
+/* ═══════════ STANDARDS ═══════════ */
+const standards=[
+  {
+    code:'IAS 1', type:'ias', title:'عرض القوائم المالية',
+    socpa:'اعتُمد مع تعديلات: استبدلت الهيئة مصطلحات "الربح أو الخسارة" و"مكونات الربح أو الخسارة" بمصطلحي "قائمة الدخل" و"صافي الدخل" في عدة فقرات، لأنهما المتعارف عليهما في بيئة المملكة.',
+    brief:'الإطار العام لعرض القوائم المالية ومكوناتها',
+    what:'يحدد المعيار الأساس العام لعرض القوائم المالية بغرض قابلية المقارنة، ويشترط مجموعة كاملة تشمل: قائمة المركز المالي، قائمة الدخل الشامل، قائمة التغيرات في حقوق الملكية، قائمة التدفقات النقدية، والإيضاحات.',
+    points:['الاستمرارية: تُعد القوائم على افتراض استمرار المنشأة','أساس الاستحقاق (عدا قائمة التدفقات النقدية)','الثبات في العرض والتصنيف بين الفترات','عدم إجراء المقاصة بين الأصول والالتزامات إلا بنص'],
+    example:'منشأة لديها ذمم مدينة 100,000 وذمم دائنة لنفس العميل 30,000 — لا يجوز عرض الصافي 70,000 إلا إذا وُجد حق قانوني للمقاصة ونية للتسوية بالصافي.',
+    q:'أي القوائم التالية لا تُعد على أساس الاستحقاق؟',
+    opts:['قائمة الدخل','قائمة التدفقات النقدية','قائمة المركز المالي'],c:1
+  },
+  {
+    code:'IAS 2', type:'ias', title:'المخزون',
+    socpa:'اعتُمد كما صدر من غير أي تعديل — يُطبَّق في المملكة بنصه الدولي الكامل.',
+    brief:'قياس المخزون وتحديد تكلفته',
+    what:'يقاس المخزون بالتكلفة أو صافي القيمة القابلة للتحقق أيهما أقل. تشمل التكلفة: تكاليف الشراء، تكاليف التحويل، والتكاليف الأخرى اللازمة لوصول المخزون لحالته ومكانه الحاليين.',
+    points:['طرق التكلفة المسموحة: FIFO أو المتوسط المرجّح (LIFO محظورة)','صافي القيمة القابلة للتحقق = سعر البيع المقدّر − تكاليف الإتمام والبيع','خسارة الهبوط تُعترف كمصروف فوراً','التكاليف الإدارية العامة وتكاليف البيع لا تدخل في التكلفة'],
+    example:'مخزون تكلفته 50,000 ريال وسعر بيعه المتوقع 48,000 وتكاليف بيعه 3,000. صافي القيمة = 45,000 وهي أقل من التكلفة، فيُقيّم المخزون بـ45,000 ويُعترف بخسارة هبوط 5,000: من ح/ خسارة هبوط المخزون — إلى ح/ المخزون.',
+    q:'أي طريقة تسعير مخزون محظورة بموجب IAS 2؟',
+    opts:['الوارد أولاً صادر أولاً FIFO','الوارد أخيراً صادر أولاً LIFO','المتوسط المرجّح'],c:1
+  },
+  {
+    code:'IAS 16', type:'ias', title:'الممتلكات والآلات والمعدات',
+    socpa:'اعتُمد مع إضافة الفقرة (42أ): إذا اختارت المنشأة نموذج إعادة التقويم، فيجب أن يقوم بالتقويم مُقيّم مؤهل ومستقل عن المنشأة، حاصل على مؤهلات مهنية معترف بها وذات صلة، ولديه خبرة حديثة في موقع وصنف الأصول المُقوَّمة — مع الإفصاح عن اسمه ومؤهلاته.',
+    brief:'الأصول الثابتة: الاعتراف، القياس، والإهلاك',
+    what:'يُعترف بالأصل الثابت بالتكلفة عند الاقتناء (سعر الشراء + التكاليف المباشرة للوصول به لحالة التشغيل). لاحقاً يُقاس بنموذج التكلفة أو نموذج إعادة التقييم، ويُهلك على مدى عمره الإنتاجي.',
+    points:['التكلفة تشمل: الشحن، التركيب, الرسوم الجمركية، تكاليف التفكيك المقدّرة','الإهلاك يبدأ عندما يصبح الأصل جاهزاً للاستخدام','تُراجع طريقة الإهلاك والعمر الإنتاجي والقيمة التخريدية سنوياً','قطع الأرض عادة لا تُهلك'],
+    example:'شراء آلة بـ200,000 + شحن 10,000 + تركيب 15,000 = تكلفة الأصل 225,000. بعمر 10 سنوات وقيمة تخريدية 25,000: الإهلاك السنوي = (225,000−25,000)÷10 = 20,000 ريال.',
+    q:'أي مما يلي لا يدخل ضمن تكلفة الأصل الثابت؟',
+    opts:['تكاليف التركيب','تكاليف تدريب الموظفين على الآلة','رسوم الشحن والجمارك'],c:1
+  },
+  {
+    code:'IFRS 15', type:'ifrs', title:'الإيراد من العقود مع العملاء',
+    socpa:'اعتُمد كما صدر من غير أي تعديل — نموذج الخطوات الخمس يُطبَّق في المملكة بنصه الدولي.',
+    brief:'نموذج الخطوات الخمس للاعتراف بالإيراد',
+    what:'يعتمد المعيار نموذجاً موحداً من خمس خطوات للاعتراف بالإيراد عند (أو أثناء) الوفاء بالتزامات الأداء وانتقال السيطرة للعميل.',
+    points:['١) تحديد العقد مع العميل','٢) تحديد التزامات الأداء المنفصلة','٣) تحديد سعر المعاملة','٤) توزيع السعر على التزامات الأداء','٥) الاعتراف بالإيراد عند الوفاء بكل التزام'],
+    example:'شركة اتصالات تبيع جوالاً + باقة سنوية بمبلغ إجمالي 3,600 ريال. يُوزّع السعر: الجوال (يُعترف بإيراده فوراً عند التسليم) والباقة (يُعترف بإيرادها شهرياً على مدار السنة).',
+    q:'متى يُعترف بالإيراد وفق IFRS 15؟',
+    opts:['عند استلام النقد','عند توقيع العقد','عند انتقال السيطرة على السلعة/الخدمة للعميل'],c:2
+  },
+  {
+    code:'IFRS 16', type:'ifrs', title:'عقود الإيجار',
+    socpa:'اعتُمد مع إضافة الفقرة (60أ): إفصاح إضافي كحد أدنى عن المتطلبات التعاقدية لكل طرف بشأن ملكية الأصل المستأجر وصيانته الأساسية وضمانه والتأمين عليه وترتيبات نقل الملكية للمستأجر (إن وجدت) — لحاجة مستخدمي القوائم في بيئة المملكة.',
+    brief:'حق الاستخدام والتزام الإيجار',
+    what:'يلزم المعيار المستأجر بإثبات معظم عقود الإيجار في المركز المالي: أصل "حق استخدام" مقابل "التزام إيجار" بالقيمة الحالية للدفعات، مع استثناءين: العقود قصيرة الأجل (≤ 12 شهراً) والأصول منخفضة القيمة.',
+    points:['أصل حق الاستخدام يُهلك على مدة العقد','التزام الإيجار يُطفأ مع فصل الفائدة كمصروف تمويلي','ألغى المعيار التمييز القديم (تشغيلي/تمويلي) لدى المستأجر','المؤجّر ما زال يصنف العقود تشغيلية أو تمويلية'],
+    example:'استأجرت منشأة مبنى 5 سنوات بدفعة سنوية 100,000. القيمة الحالية للدفعات 420,000. القيد الابتدائي: من ح/ أصل حق الاستخدام 420,000 — إلى ح/ التزام عقد الإيجار 420,000.',
+    q:'أي عقود الإيجار يمكن إعفاؤها من الإثبات في المركز المالي؟',
+    opts:['كل عقود العقارات','العقود قصيرة الأجل والأصول منخفضة القيمة','عقود المعدات فقط'],c:1
+  },
+  {
+    code:'IFRS 9', type:'ifrs', title:'الأدوات المالية',
+    socpa:'مُعتمد ضمن المعايير المطبَّقة في المملكة، ويُراجع سنوياً مع النسخة العربية المحدّثة الصادرة من الهيئة.',
+    brief:'تصنيف وقياس الأصول المالية والخسائر الائتمانية المتوقعة',
+    what:'يصنّف الأصول المالية حسب نموذج الأعمال وخصائص التدفقات النقدية إلى: التكلفة المطفأة، القيمة العادلة من خلال الدخل الشامل الآخر، أو القيمة العادلة من خلال الربح والخسارة. وأدخل نموذج "الخسائر الائتمانية المتوقعة" (ECL) بدلاً من الخسائر المتكبدة.',
+    points:['التصنيف يعتمد على: نموذج الأعمال + اختبار SPPI','مخصص الخسائر يُكوَّن مقدّماً وليس بعد وقوع التعثر','الذمم التجارية تخضع للنهج المبسّط للخسائر المتوقعة'],
+    example:'ذمم مدينة 500,000 ريال، تقدّر المنشأة خسائر ائتمانية متوقعة 2٪. القيد: من ح/ مصروف الخسائر الائتمانية 10,000 — إلى ح/ مخصص الخسائر الائتمانية المتوقعة 10,000.',
+    q:'نموذج الخسائر في IFRS 9 يقوم على:',
+    opts:['الخسائر المتكبدة فعلاً فقط','الخسائر الائتمانية المتوقعة','عدم تكوين أي مخصصات'],c:1
+  },
+  {
+    code:'معيار محلي', type:'ias', title:'معيار محاسبة الزكاة (المعدل)',
+    socpa:'معيار محلي سعودي صادر من الهيئة ولا يوجد ما يقابله في المعايير الدولية — يُطبَّق بالتوازي مع المعايير الدولية المعتمدة.',
+    brief:'قياس وعرض والإفصاح عن مصروف الزكاة',
+    what:'يحدد هذا المعيار متطلبات قياس مصروف الزكاة وعرضه والإفصاح عنه في القوائم المالية، بحيث تُظهر القوائم بعدالة المركز المالي للمنشأة ونتائج أعمالها. ونطاقه: المنشآت الهادفة للربح الملزمة نظاماً بدفع الزكاة إلى هيئة الزكاة والضريبة والجمارك. ولا يتناول المعيار أسلوب احتساب الزكاة نفسه — فذلك يُحدَّد وفق أحكام وقواعد فريضة الزكاة والتعليمات المنظمة لها.',
+    points:['القياس: يُقاس مصروف الزكاة ويُثبت لكل فترة مالية على حدة وفقاً لقواعد فريضة الزكاة في المملكة','تُسوّى مخصصات الزكاة في السنة المالية التي يُعتمد فيها الربط النهائي، وتُعالج الفروقات وفق معيار المحاسبة الدولي 8','العرض: يجب عرض مصروف الزكاة للفترة في بند مستقل في قائمة الدخل قبل الربح أو الخسارة','الإفصاح: السياسة المحاسبية للزكاة','الإفصاح: تفاصيل عناصر ومبالغ وعاء الزكاة الموجبة والسالبة','الإفصاح: حركة مخصص الزكاة (رصيد أول الفترة + الإضافات − الاستبعادات = رصيد آخر الفترة)','الإفصاح: مبلغ الربط النهائي والفروقات بينه وبين المخصص وطبيعتها','الإفصاح: السنوات التي لم يصدر لها ربط نهائي، والخلافات القائمة مع الهيئة والمبلغ محل الخلاف'],
+    example:'منشأة قدّرت زكاة السنة بـ 240,000 ريال:<br/>من ح/ مصروف الزكاة 240,000 — إلى ح/ مخصص الزكاة 240,000<br/><br/>وعند اعتماد الربط النهائي بمبلغ 265,000 ريال وسداده:<br/>من مذكورين: ح/ مخصص الزكاة 240,000 + ح/ مصروف الزكاة 25,000 (فرق الربط) — إلى ح/ البنك 265,000',
+    q:'وفق معيار محاسبة الزكاة (المعدل)، أين يُعرض مصروف الزكاة؟',
+    opts:['يُخصم من الأرباح المبقاة في حقوق الملكية','في بند مستقل في قائمة الدخل قبل الربح أو الخسارة','ضمن المصروفات الإدارية والعمومية'],c:1
+  },
+  {
+    code:'IFRS 18', type:'ifrs', title:'العرض والإفصاح في القوائم المالية',
+    socpa:'اعتُمد مع تعديلات مصطلحية (قائمة الدخل / صافي الدخل بدل قائمة الأداء المالي والربح أو الخسارة). تاريخ السريان: الفترات السنوية التي تبدأ في 1 يناير 2027 أو بعده، ويُسمح بالتطبيق الأسبق.',
+    brief:'المعيار الجديد الذي يحل محل معيار المحاسبة الدولي 1',
+    what:'أصدر مجلس المعايير الدولية المعيار 18 ليحل محل معيار المحاسبة الدولي 1 في عرض القوائم المالية، بهدف تحسين قابلية المقارنة والشفافية في قائمة الدخل. ويُدخل هيكلاً إلزامياً جديداً لقائمة الدخل وإفصاحات جديدة عن مقاييس الأداء التي تعرّفها الإدارة.',
+    points:['هيكل جديد لقائمة الدخل بفئات محددة (تشغيلي، استثماري، تمويلي)','إجماليات فرعية إلزامية تُعرض في صلب القائمة','إفصاح عن مقاييس الأداء المعرَّفة من الإدارة ومطابقتها بالبنود النظامية','قواعد أوضح للتجميع والتفصيل في القوائم والإيضاحات','يبقى معيار المحاسبة الدولي 1 مطبقاً حتى تاريخ سريان المعيار 18'],
+    example:'منشأة تعرض حالياً قائمة دخلها وفق IAS 1 بتصنيف حر للمصروفات. عند تطبيق IFRS 18 من 2027 ستلزم بتصنيف البنود في الفئات الثلاث وإظهار إجمالي الربح التشغيلي كإجمالي فرعي إلزامي، وإذا أعلنت مقياساً مثل "الربح التشغيلي المعدّل" فيجب الإفصاح عنه ومطابقته.',
+    q:'المعيار الدولي للتقرير المالي 18 يحل محل أي معيار، ومتى يسري؟',
+    opts:['يحل محل IAS 1 ويسري من 1 يناير 2027','يحل محل IFRS 15 ويسري من 2026','يحل محل IAS 7 ويسري فوراً'],c:0
+  },
+];
+
+let stdPick=null;
+function renderStdGrid(){
+  document.getElementById('std-list').style.display='';
+  document.getElementById('std-view').style.display='none';
+  document.getElementById('std-grid').innerHTML=standards.map((s,i)=>`
+    <div class="std-card" onclick="openStd(${i})">
+      <span class="std-code ${s.type}">${s.code}</span>
+      <h3>${s.title}</h3>
+      <p>${s.brief}</p>
+    </div>`).join('');
+}
+
+function openStd(i){
+  const s=standards[i]; stdPick=null;
+  document.getElementById('std-list').style.display='none';
+  const v=document.getElementById('std-view');
+  v.style.display='';
+  v.innerHTML=`
+    <div class="scen-detail">
+      <div class="std-detail-head">
+        <button class="btn btn-ghost btn-sm" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)" onclick="renderStdGrid()">→ رجوع للمعايير</button>
+        <h3><span class="std-code ${s.type}" style="margin-left:8px">${s.code}</span> ${s.title}</h3>
+        <p>${s.brief}</p>
+      </div>
+      <div class="scen-body">
+        ${s.socpa?`<div class="socpa-box"><span class="socpa-t">اعتماد الهيئة السعودية للمراجعين والمحاسبين</span>${s.socpa}</div>`:''}
+        <div class="std-section"><h4>ملخص المعيار</h4><p>${s.what}</p></div>
+        <div class="std-section"><h4>أهم النقاط</h4><ul>${s.points.map(p=>`<li>${p}</li>`).join('')}</ul></div>
+        <div class="std-section"><h4>مثال تطبيقي</h4><div class="std-example"><b>مثال:</b>${s.example}</div></div>
+        <div class="std-section">
+          <h4>اختبر فهمك</h4>
+          <p style="margin-bottom:10px;font-weight:600">${s.q}</p>
+          <div class="opts" id="std-opts">
+            ${s.opts.map((o,oi)=>`<label class="opt" ><input type="radio" name="std" onchange="stdPick=${oi}"/><span>${o}</span></label>`).join('')}
+          </div>
+          <div id="std-result" style="margin-top:14px"></div>
+          <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+            <button class="btn btn-teal" onclick="checkStd(${i})">تحقق ✓</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function checkStd(i){
+  const s=standards[i], r=document.getElementById('std-result');
+  if(stdPick===null){r.innerHTML='<div class="alert a-err">اختر إجابة أولاً.</div>';return;}
+  document.querySelectorAll('#std-opts .opt').forEach((el,oi)=>{
+    el.classList.remove('ok','no');
+    if(oi===s.c)el.classList.add('ok');
+    else if(oi===stdPick)el.classList.add('no');
+  });
+  r.innerHTML=stdPick===s.c
+    ?'<div class="alert a-ok">إجابة صحيحة! فهمك للمعيار ممتاز.</div>'
+    :'<div class="alert a-err">إجابة غير صحيحة — راجع ملخص المعيار أعلاه.</div>';
+}
+
+
+/* ═══════════ PRO CERTS ═══════════ */
+const proCerts=[
+  {
+    abbr:'SOCPA', title:'زمالة الهيئة السعودية للمراجعين والمحاسبين',
+    org:'الهيئة السعودية للمراجعين والمحاسبين',
+    about:'الشهادة المهنية الأعلى في المملكة العربية السعودية، وهي شرط أساسي لمزاولة مهنة المراجعة والتوقيع على القوائم المالية داخل المملكة.',
+    reqs:['بكالوريوس محاسبة أو تخصص ذي صلة','اجتياز اختبارات الزمالة','خبرة عملية ميدانية معتمدة'],
+    exams:'اختبارات تغطي: المحاسبة، المراجعة، الزكاة والضريبة، الأنظمة التجارية',
+    duration:'سنة إلى ٣ سنوات في المتوسط',
+    career:'مراجع قانوني، شريك في مكاتب المراجعة، مدير مالي، مستشار زكاة وضريبة',
+    fit:'الأنسب لمن يريد العمل والترخيص المهني داخل السعودية.'
+  },
+  {
+    abbr:'CPA', title:'المحاسب القانوني المعتمد',
+    org:'AICPA — المعهد الأمريكي للمحاسبين القانونيين',
+    about:'أشهر شهادة محاسبية في العالم، تركز على المحاسبة المالية والمراجعة وفق المعايير الأمريكية، ومطلوبة بقوة في الشركات متعددة الجنسيات ومكاتب المراجعة الكبرى (Big 4).',
+    reqs:['150 ساعة دراسية معتمدة (تختلف حسب الولاية)','اجتياز الأقسام الأربعة للاختبار','خبرة عملية بإشراف CPA مرخّص'],
+    exams:'أقسام أساسية: AUD المراجعة، FAR المحاسبة المالية، REG الأنظمة والضرائب + قسم تخصصي اختياري',
+    duration:'12–18 شهراً في المتوسط',
+    career:'مراجع خارجي، محاسب مالي أول، مدير مالي، مستشار ضريبي دولي',
+    fit:'الأنسب لمسار المراجعة والعمل في الشركات العالمية.'
+  },
+  {
+    abbr:'CMA', title:'المحاسب الإداري المعتمد',
+    org:'IMA — معهد المحاسبين الإداريين',
+    about:'شهادة متخصصة في المحاسبة الإدارية والتخطيط المالي واتخاذ القرار، من أكثر الشهادات انتشاراً في الخليج لتركيزها على الجانب الإداري والتحليلي داخل الشركات.',
+    reqs:['بكالوريوس في أي تخصص','اجتياز جزأين اختباريين','سنتان خبرة في المحاسبة الإدارية أو الإدارة المالية'],
+    exams:'الجزء الأول: التخطيط المالي والأداء والتحليلات • الجزء الثاني: الإدارة المالية الاستراتيجية',
+    duration:'8–16 شهراً في المتوسط',
+    career:'محلل مالي، محاسب تكاليف، مراقب مالي (Controller)، مدير تخطيط مالي FP&A',
+    fit:'الأنسب لمن يعمل داخل الشركات في التحليل والموازنات واتخاذ القرار.'
+  },
+  {
+    abbr:'ACCA', title:'زمالة جمعية المحاسبين القانونيين المعتمدين',
+    org:'ACCA — المملكة المتحدة',
+    about:'شهادة بريطانية عالمية معترف بها في أكثر من 180 دولة، تعتمد على المعايير الدولية IFRS مما يجعلها ملائمة جداً للمنطقة العربية التي تطبق هذه المعايير.',
+    reqs:['شهادة الثانوية كحد أدنى للبدء','اجتياز حتى 13 ورقة اختبارية (تتوفر إعفاءات لخريجي المحاسبة)','3 سنوات خبرة عملية'],
+    exams:'ثلاث مستويات: المعرفة التطبيقية، المهارات التطبيقية, المستوى الاستراتيجي المهني',
+    duration:'2–4 سنوات حسب الإعفاءات',
+    career:'محاسب مالي، مراجع، مدير تقارير مالية IFRS، مدير مالي',
+    fit:'الأنسب لمن يريد شهادة دولية مبنية على معايير IFRS المطبقة خليجياً.'
+  },
+  {
+    abbr:'CIA', title:'المراجع الداخلي المعتمد',
+    org:'IIA — معهد المراجعين الداخليين',
+    about:'الشهادة العالمية الوحيدة المتخصصة في المراجعة الداخلية، تركز على الحوكمة وإدارة المخاطر والرقابة الداخلية، ويزداد الطلب عليها مع تشديد متطلبات الحوكمة.',
+    reqs:['بكالوريوس (أو خبرة تعويضية)','اجتياز 3 أجزاء اختبارية','خبرة في المراجعة الداخلية (تختلف حسب المؤهل)'],
+    exams:'الجزء ١: أساسيات المراجعة الداخلية • الجزء ٢: ممارسة المراجعة • الجزء ٣: المعرفة المهنية للأعمال',
+    duration:'8–14 شهراً في المتوسط',
+    career:'مراجع داخلي، مدير مراجعة داخلية، أخصائي حوكمة ومخاطر وامتثال GRC',
+    fit:'الأنسب لمسار المراجعة الداخلية والحوكمة في الشركات والجهات الحكومية.'
+  },
+  {
+    abbr:'CFA', title:'المحلل المالي المعتمد',
+    org:'CFA Institute',
+    about:'أرقى شهادة في التحليل المالي والاستثمار وإدارة المحافظ. ليست شهادة محاسبية بحتة لكنها الامتداد الطبيعي للمحاسبين المتجهين لقطاع الاستثمار والأسواق المالية.',
+    reqs:['بكالوريوس أو في السنة الأخيرة','اجتياز 3 مستويات اختبارية متتالية','4000 ساعة خبرة عملية ذات صلة'],
+    exams:'ثلاثة مستويات تغطي: التحليل المالي، تقييم الأصول، إدارة المحافظ، الأخلاقيات المهنية',
+    duration:'2.5–4 سنوات في المتوسط',
+    career:'محلل استثمار، مدير محافظ، محلل أسهم، إدارة أصول وصناديق',
+    fit:'الأنسب لمن يريد الانتقال من المحاسبة إلى الاستثمار والأسواق المالية.'
+  },
+  {
+    abbr:'CertIFR', title:'شهادة المعايير الدولية للتقرير المالي',
+    org:'ACCA',
+    about:'شهادة قصيرة ومركّزة في المعايير الدولية IFRS، مثالية كنقطة انطلاق أو إضافة سريعة للسيرة الذاتية دون التزام سنوات طويلة.',
+    reqs:['لا توجد متطلبات مسبقة صارمة','اجتياز اختبار واحد عن بُعد'],
+    exams:'اختبار واحد شامل لمفاهيم وتطبيقات معايير IFRS',
+    duration:'2–4 أشهر',
+    career:'تعزيز ملف المحاسب المالي ومُعدّ التقارير المالية وفق IFRS',
+    fit:'الأنسب كبداية سريعة أو مكمّل مع أي شهادة أخرى.'
+  },
+  {
+    abbr:'CFE', title:'فاحص الاحتيال المعتمد',
+    org:'ACFE — جمعية فاحصي الاحتيال المعتمدين',
+    about:'الشهادة الرائدة عالمياً في كشف الاحتيال المالي والتحقيق فيه ومنعه، ويتزايد الطلب عليها مع نمو وحدات الامتثال ومكافحة الاحتيال.',
+    reqs:['بكالوريوس + نقاط تأهيل حسب الخبرة','اجتياز 4 أقسام اختبارية','عضوية ACFE'],
+    exams:'الأقسام: المعاملات المالية الاحتيالية، القانون، التحقيق، الوقاية والردع',
+    duration:'4–9 أشهر في المتوسط',
+    career:'محقق احتيال مالي، أخصائي امتثال، محاسب قضائي (Forensic Accountant)',
+    fit:'الأنسب لمن يهوى التحقيق المالي ومكافحة الجرائم المالية.'
+  }
+];
+
+function renderProGrid(){
+  document.getElementById('pro-list').style.display='';
+  document.getElementById('pro-view').style.display='none';
+  document.getElementById('pro-grid').innerHTML=proCerts.map((c,i)=>`
+    <div class="pro-card" onclick="openPro(${i})">
+      <div class="pro-abbr">${c.abbr}</div>
+      <h3>${c.title}</h3>
+      <div class="pro-org">${c.org}</div>
+    </div>`).join('');
+}
+
+function openPro(i){
+  const c=proCerts[i];
+  document.getElementById('pro-list').style.display='none';
+  const v=document.getElementById('pro-view');
+  v.style.display='';
+  v.innerHTML=`
+    <div class="scen-detail">
+      <div class="std-detail-head" style="background:linear-gradient(135deg,var(--navy),#1b4d6b)">
+        <button class="btn btn-ghost btn-sm" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)" onclick="renderProGrid()">→ رجوع للشهادات</button>
+        <h3>${c.abbr} — ${c.title}</h3>
+        <p>${c.org}</p>
+      </div>
+      <div class="scen-body">
+        <div class="std-section"><h4>نبذة عن الشهادة</h4><p>${c.about}</p></div>
+        <div class="pro-meta">
+          <div class="pro-meta-box"><small>المدة التقريبية</small><b>${c.duration}</b></div>
+          <div class="pro-meta-box"><small>الاختبارات</small><b style="font-size:.8rem;font-weight:500;line-height:1.6">${c.exams}</b></div>
+        </div>
+        <div class="std-section"><h4>المتطلبات</h4><ul>${c.reqs.map(r=>`<li>${r}</li>`).join('')}</ul></div>
+        <div class="std-section"><h4>المسارات الوظيفية</h4><p>${c.career}</p></div>
+        <div class="std-example"><b>لمن تناسب؟</b>${c.fit}</div>
+      </div>
+    </div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+
+/* ═══════════ LEDGER + TRIAL BALANCE ═══════════ */
+function renderLedger(){
+  const lc=document.getElementById('ledger-content'),
+        tc=document.getElementById('tb-content');
+  if(!entries.length){
+    lc.innerHTML='<div class="empty">لا توجد قيود بعد — سجّل قيوداً في دفتر اليومية أولاً وسيُبنى دفتر الأستاذ تلقائياً.</div>';
+    tc.innerHTML='';
+    return;
+  }
+  // aggregate accounts
+  const accts={};
+  entries.forEach((e,i)=>{
+    e.rows.forEach(r=>{
+      if(!accts[r.acc])accts[r.acc]={d:[],c:[]};
+      accts[r.acc][r.t].push({amt:r.amt,ref:i+1,date:e.date});
+    });
+  });
+  // T accounts
+  lc.innerHTML='<div class="taccounts">'+Object.entries(accts).map(([name,a])=>{
+    const td=a.d.reduce((s,x)=>s+x.amt,0), tcr=a.c.reduce((s,x)=>s+x.amt,0);
+    const bal=td-tcr;
+    return `<div class="tacct">
+      <div class="tacct-h">ح/ ${name}</div>
+      <div class="tacct-cols">
+        <div class="tacct-col dd"><h5>مدين</h5>${a.d.map(x=>`<div class="tacct-line"><span>قيد ${x.ref}</span><b>${fmt(x.amt)}</b></div>`).join('')||'<div class="tacct-line" style="color:var(--ink3)">—</div>'}</div>
+        <div class="tacct-col cc"><h5>دائن</h5>${a.c.map(x=>`<div class="tacct-line"><span>قيد ${x.ref}</span><b>${fmt(x.amt)}</b></div>`).join('')||'<div class="tacct-line" style="color:var(--ink3)">—</div>'}</div>
+      </div>
+      <div class="tacct-foot">
+        <span>الرصيد</span>
+        <b class="${bal>=0?'bal-d':'bal-c'}">${fmt(Math.abs(bal))} ${bal>0?'(مدين)':bal<0?'(دائن)':''}</b>
+      </div>
+    </div>`;
+  }).join('')+'</div>';
+  // trial balance
+  let sumD=0,sumC=0;
+  const rows=Object.entries(accts).map(([name,a])=>{
+    const bal=a.d.reduce((s,x)=>s+x.amt,0)-a.c.reduce((s,x)=>s+x.amt,0);
+    const bd=bal>0?bal:0, bc=bal<0?-bal:0;
+    sumD+=bd; sumC+=bc;
+    return `<tr><td>ح/ ${name}</td><td class="jd">${bd?fmt(bd):''}</td><td class="jc">${bc?fmt(bc):''}</td></tr>`;
+  }).join('');
+  const balanced=Math.abs(sumD-sumC)<.005;
+  tc.innerHTML=`<table class="tb-tbl">
+    <thead><tr><th>اسم الحساب</th><th class="c" style="width:150px">أرصدة مدينة</th><th class="c" style="width:150px">أرصدة دائنة</th></tr></thead>
+    <tbody>${rows}
+      <tr class="tb-total"><td>الإجمالي</td><td class="jd">${fmt(sumD)}</td><td class="jc">${fmt(sumC)}</td></tr>
+    </tbody>
+  </table>
+  <div style="padding:14px 16px"><div class="alert ${balanced?'a-ok':'a-err'}" style="margin:0">
+    ${balanced?'ميزان المراجعة متوازن — مجاميع الأرصدة المدينة تساوي الدائنة.':'الميزان غير متوازن! راجع القيود.'}
+  </div></div>`;
+}
+
+/* ═══════════ TAX ═══════════ */
+function calcVat(){
+  const g=id=>parseFloat(document.getElementById(id).value)||0;
+  const out=g('vat-sales')*0.15, inn=g('vat-purch')*0.15, net=out-inn;
+  document.getElementById('vat-out').textContent=fmt(out);
+  document.getElementById('vat-in').textContent=fmt(inn);
+  const n=document.getElementById('vat-net'), l=document.getElementById('vat-net-label'), m=document.getElementById('vat-msg');
+  n.textContent=fmt(Math.abs(net));
+  if(net>0){l.textContent='صافي الضريبة المستحقة للسداد';n.className='err';
+    m.innerHTML='<div class="alert a-info">تسدّد المنشأة هذا المبلغ لهيئة الزكاة والضريبة والجمارك قبل نهاية الشهر التالي للفترة.</div>';}
+  else if(net<0){l.textContent='رصيد ضريبي قابل للاسترداد';n.className='ok';
+    m.innerHTML='<div class="alert a-ok">ضريبة مدخلاتك أعلى من مخرجاتك — يحق لك طلب الاسترداد أو ترحيل الرصيد للفترة التالية.</div>';}
+  else{l.textContent='صافي الضريبة';n.className='';m.innerHTML='';}
+}
+
+const taxQs=[
+  {q:'نسبة ضريبة القيمة المضافة الأساسية في السعودية:',o:['5٪','15٪','20٪'],c:1},
+  {q:'صافي الضريبة في الإقرار يُحسب كالتالي:',o:['ضريبة المدخلات − ضريبة المخرجات','ضريبة المخرجات − ضريبة المدخلات','مجموع المخرجات والمدخلات'],c:1},
+  {q:'الفرق بين التوريد الصفري والمعفى:',o:['لا فرق بينهما','الصفري يحتفظ بحق خصم المدخلات، والمعفى لا يخصم ما يخصه','المعفى نسبته 15٪'],c:1},
+  {q:'آخر موعد لتقديم الإقرار وسداده:',o:['نهاية الفترة الضريبية نفسها','نهاية الشهر التالي لانتهاء الفترة','بعد 6 أشهر'],c:1}
+];
+let taxAns={}, taxDone=false;
+
+function renderTaxQuiz(){
+  let h='';
+  if(taxDone){
+    const sc=taxQs.filter((q,i)=>taxAns[i]===q.c).length;
+    h+=`<div class="alert ${sc===taxQs.length?'a-ok':'a-info'}">نتيجتك: <b>${sc}/${taxQs.length}</b>${sc===taxQs.length?' — ممتاز!':''}</div>`;
+  }
+  taxQs.forEach((q,qi)=>{
+    h+=`<div class="quiz-q"><h3>${qi+1}. ${q.q}</h3><div class="opts${quizDone?' locked':''}">`;
+    q.o.forEach((o,oi)=>{
+      let cls='';
+      if(taxDone){if(oi===q.c)cls='ok';else if(oi===taxAns[qi])cls='no';}
+      h+=`<label class="opt ${cls}"><input type="radio" name="tq${qi}" ${taxDone?'disabled':''} ${taxAns[qi]===oi?'checked':''} onchange="taxAns[${qi}]=${oi}"/><span>${o}</span></label>`;
+    });
+    h+='</div></div>';
+  });
+  h+=taxDone
+    ?'<button class="btn btn-ghost" onclick="taxAns={};taxDone=false;renderTaxQuiz()">إعادة</button>'
+    :'<button class="btn btn-teal" onclick="if(Object.keys(taxAns).length<taxQs.length){alert(\'أجب على جميع الأسئلة.\');}else{taxDone=true;renderTaxQuiz();}">تحقق ✓</button>';
+  document.getElementById('tax-quiz').innerHTML=h;
+}
+
+/* ═══════════ FINANCIAL STATEMENTS ═══════════ */
+const statements=[
+  {
+    code:'القائمة ١', title:'قائمة الدخل',
+    brief:'قياس نتيجة النشاط (ربح أو خسارة) خلال فترة',
+    what:'تقيس قائمة الدخل الأداء المالي للمنشأة خلال فترة زمنية (سنة/ربع) عبر مطابقة الإيرادات بالمصروفات للوصول إلى صافي الربح أو الخسارة. تتبع مبدأ الاستحقاق لا التدفق النقدي.',
+    parts:['الإيرادات: المبيعات وإيرادات النشاط الأخرى','تكلفة المبيعات: تكلفة البضاعة المباعة','مجمل الربح = صافي المبيعات − تكلفة المبيعات','المصروفات التشغيلية: رواتب، إيجار، إهلاك، تسويق','صافي الربح = مجمل الربح − المصروفات التشغيلية ± البنود الأخرى'],
+    example:'مبيعات 500,000 − مردودات 20,000 = صافي مبيعات 480,000. تكلفة المبيعات 300,000 → مجمل الربح 180,000. مصروفات تشغيلية 110,000 → صافي الربح 70,000 ريال.',
+    q:'منشأة: صافي مبيعات 800,000، تكلفة مبيعات 500,000، مصروفات تشغيلية 180,000، إيراد فوائد 10,000، مصروف فوائد 30,000. كم صافي الربح؟',
+    opts:['100,000 ريال','120,000 ريال','300,000 ريال'],
+    c:0,
+    exp:'مجمل الربح = 800,000 − 500,000 = 300,000. صافي الربح = 300,000 − 180,000 + 10,000 (إيراد فوائد) − 30,000 (مصروف فوائد) = 100,000 ريال.'
+  },
+  {
+    code:'القائمة ٢', title:'قائمة المركز المالي',
+    brief:'صورة لحظية للأصول والالتزامات وحقوق الملكية',
+    what:'تُظهر قائمة المركز المالي (الميزانية العمومية) الوضع المالي للمنشأة في لحظة محددة، وتقوم على المعادلة المحاسبية: الأصول = الالتزامات + حقوق الملكية. تُصنّف بنودها إلى متداولة وغير متداولة.',
+    parts:['الأصول المتداولة: نقدية، عملاء، مخزون (تتحول لنقد خلال سنة)','الأصول غير المتداولة: أراضٍ، مبانٍ، معدات، أصول غير ملموسة','الالتزامات المتداولة: موردون، مصروفات مستحقة، قروض قصيرة','الالتزامات غير المتداولة: قروض طويلة الأجل','حقوق الملكية: رأس المال + الأرباح المحتجزة − المسحوبات'],
+    example:'أصول (نقد 50,000 + عملاء 80,000 + مبانٍ 300,000) = 430,000. التزامات (موردون 90,000 + قرض 100,000) = 190,000. حقوق الملكية = 430,000 − 190,000 = 240,000 ريال.',
+    q:'إجمالي الأصول 750,000، حقوق الملكية 450,000، التزامات غير متداولة 200,000. كم الالتزامات المتداولة؟',
+    opts:['100,000 ريال','300,000 ريال','550,000 ريال'],
+    c:0,
+    exp:'إجمالي الالتزامات = الأصول − حقوق الملكية = 750,000 − 450,000 = 300,000. الالتزامات المتداولة = 300,000 − 200,000 (غير متداولة) = 100,000 ريال.'
+  },
+  {
+    code:'القائمة ٣', title:'قائمة التدفقات النقدية',
+    brief:'حركة النقد الداخل والخارج فعلياً',
+    what:'تعرض قائمة التدفقات النقدية حركة النقد الفعلية (لا المستحقة) خلال الفترة، مقسّمة إلى ثلاثة أنشطة. هي القائمة الوحيدة التي لا تُعد على أساس الاستحقاق بل على الأساس النقدي.',
+    parts:['الأنشطة التشغيلية: نقد من العمليات الأساسية (تحصيل عملاء، دفع موردين ورواتب)','الأنشطة الاستثمارية: شراء/بيع الأصول الثابتة والاستثمارات','الأنشطة التمويلية: القروض، إصدار رأس المال، توزيع الأرباح','صافي التغير في النقد = مجموع الأنشطة الثلاثة','النقد آخر المدة = النقد أول المدة + صافي التغير'],
+    example:'تشغيلي +120,000، استثماري −80,000 (شراء آلة)، تمويلي +30,000 (قرض). صافي التغير = +70,000. لو النقد أول المدة 25,000 → آخر المدة 95,000 ريال.',
+    q:'تشغيلي +200,000، استثماري −150,000، تمويلي −40,000، النقد أول المدة 60,000. كم النقد آخر المدة؟',
+    opts:['70,000 ريال','10,000 ريال','130,000 ريال'],
+    c:0,
+    exp:'صافي التغير = 200,000 − 150,000 − 40,000 = +10,000. النقد آخر المدة = 60,000 (أول المدة) + 10,000 = 70,000 ريال.'
+  },
+  {
+    code:'القائمة ٤', title:'قائمة التغيرات في حقوق الملكية',
+    brief:'حركة حقوق الملاك خلال الفترة',
+    what:'توضح هذه القائمة التغيرات التي طرأت على حقوق الملكية بين بداية الفترة ونهايتها، شاملةً إضافات رأس المال، صافي ربح الفترة، والتوزيعات أو المسحوبات.',
+    parts:['رصيد حقوق الملكية أول المدة','+ إضافات رأس المال خلال الفترة','+ صافي ربح الفترة (أو − صافي الخسارة)','− التوزيعات / المسحوبات','= رصيد حقوق الملكية آخر المدة'],
+    example:'رأس مال أول المدة 300,000 + صافي ربح 70,000 − مسحوبات 20,000 = حقوق ملكية آخر المدة 350,000 ريال.',
+    q:'حقوق الملكية أول المدة 400,000، أضاف المالك 50,000، صافي الخسارة 30,000، مسحوبات 25,000. كم حقوق الملكية آخر المدة؟',
+    opts:['395,000 ريال','505,000 ريال','345,000 ريال'],
+    c:0,
+    exp:'400,000 + 50,000 (إضافة) − 30,000 (خسارة) − 25,000 (مسحوبات) = 395,000 ريال. الخسارة والمسحوبات كلاهما يخفّض حقوق الملكية.'
+  }
+];
+
+let fsPick=null;
+function renderFsGrid(){
+  document.getElementById('fs-list').style.display='';
+  document.getElementById('fs-view').style.display='none';
+  document.getElementById('fs-grid').innerHTML=statements.map((s,i)=>`
+    <div class="std-card" onclick="openFs(${i})">
+      <span class="std-code ias">${s.code}</span>
+      <h3>${s.title}</h3>
+      <p>${s.brief}</p>
+    </div>`).join('');
+}
+
+function openFs(i){
+  const s=statements[i]; fsPick=null;
+  document.getElementById('fs-list').style.display='none';
+  const v=document.getElementById('fs-view');
+  v.style.display='';
+  v.innerHTML=`
+    <div class="scen-detail">
+      <div class="std-detail-head">
+        <button class="btn btn-ghost btn-sm" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)" onclick="renderFsGrid()">→ رجوع للقوائم</button>
+        <h3>${s.title}</h3>
+        <p>${s.brief}</p>
+      </div>
+      <div class="scen-body">
+        <div class="std-section"><h4>تعريف القائمة</h4><p>${s.what}</p></div>
+        <div class="std-section"><h4>مكوّناتها الأساسية</h4><ul>${s.parts.map(p=>`<li>${p}</li>`).join('')}</ul></div>
+        <div class="std-section"><h4>مثال تطبيقي</h4><div class="std-example"><b>مثال:</b>${s.example}</div></div>
+        <div class="std-section">
+          <h4>سؤال تحدي</h4>
+          <p style="margin-bottom:10px;font-weight:600">${s.q}</p>
+          <div class="opts" id="fs-opts">
+            ${s.opts.map((o,oi)=>`<label class="opt"><input type="radio" name="fs" onchange="fsPick=${oi}"/><span>${o}</span></label>`).join('')}
+          </div>
+          <div id="fs-result" style="margin-top:14px"></div>
+          <button class="btn btn-teal" onclick="checkFs(${i})" style="margin-top:14px">تحقق ✓</button>
+        </div>
+      </div>
+    </div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function checkFs(i){
+  const s=statements[i], r=document.getElementById('fs-result');
+  if(fsPick===null){r.innerHTML='<div class="alert a-err">اختر إجابة أولاً.</div>';return;}
+  document.querySelectorAll('#fs-opts .opt').forEach((el,oi)=>{
+    el.classList.remove('ok','no');
+    if(oi===s.c)el.classList.add('ok');
+    else if(oi===fsPick)el.classList.add('no');
+  });
+  r.innerHTML=fsPick===s.c
+    ?`<div class="alert a-ok"><b>إجابة صحيحة!</b><br/>${s.exp}</div>`
+    :`<div class="alert a-err"><b>إجابة غير صحيحة.</b><br/>${s.exp}</div>`;
+}
+
+/* ═══════════ JOURNAL PRACTICE PROBLEMS ═══════════ */
+const problems=[
+  {t:'أودع صاحب المنشأة 150,000 ريال في الحساب البنكي كرأس مال لبدء النشاط.',
+   s:[['د','البنك',150000],['ح','رأس المال',150000]]},
+  {t:'اشترت المنشأة بضاعة بغرض البيع بمبلغ 45,000 ريال، سدّدت 20,000 نقداً من الصندوق والباقي على الحساب من مؤسسة النور.',
+   s:[['د','المشتريات',45000],['ح','الصندوق',20000],['ح','الموردون (مؤسسة النور)',25000]]},
+  {t:'باعت المنشأة بضاعة بمبلغ 30,000 ريال، حصّلت 12,000 نقداً والباقي بالأجل على العميل سالم.',
+   s:[['د','الصندوق',12000],['د','العملاء (سالم)',18000],['ح','المبيعات',30000]]},
+  {t:'سدّدت المنشأة إيجار المحل لشهر رجب 9,000 ريال بشيك.',
+   s:[['د','مصروف الإيجار',9000],['ح','البنك',9000]]},
+  {t:'اشترت المنشأة سيارة توصيل بمبلغ 70,000 ريال: دفعت 30,000 بشيك والباقي قرضاً من البنك.',
+   s:[['د','السيارات',70000],['ح','البنك',30000],['ح','قرض البنك',40000]]},
+  {t:'حصّلت المنشأة 15,000 ريال نقداً من العميل سالم سداداً لجزء من حسابه.',
+   s:[['د','الصندوق',15000],['ح','العملاء (سالم)',15000]]},
+  {t:'ردّت المنشأة بضاعة معيبة لمؤسسة النور بقيمة 5,000 ريال كانت مشتراة بالأجل.',
+   s:[['د','الموردون (مؤسسة النور)',5000],['ح','مردودات المشتريات',5000]]},
+  {t:'استحقت رواتب الموظفين 22,000 ريال: صُرف منها 18,000 بشيكات والباقي مستحق يُدفع لاحقاً.',
+   s:[['د','مصروف الرواتب',22000],['ح','البنك',18000],['ح','رواتب مستحقة الدفع',4000]]},
+  {t:'سحب صاحب المنشأة 6,000 ريال نقداً من الصندوق لاستخدامه الشخصي.',
+   s:[['د','المسحوبات الشخصية',6000],['ح','الصندوق',6000]]},
+  {t:'في نهاية السنة: احتسبت المنشأة إهلاك السيارة 20٪ من تكلفتها البالغة 70,000 ريال.',
+   s:[['د','مصروف إهلاك السيارات',14000],['ح','مجمع إهلاك السيارات',14000]]}
+];
+let probOrder=[], probIdx=-1, solShown=false;
+
+function newProblem(){
+  if(probOrder.length===0){
+    probOrder=[...Array(problems.length).keys()].sort(()=>Math.random()-.5);
+    probIdx=-1;
+  }
+  probIdx=(probIdx+1)%probOrder.length;
+  solShown=false;
+  renderProblem();
+}
+
+function renderProblem(){
+  if(probIdx<0)return;
+  const p=problems[probOrder[probIdx]];
+  let sol='';
+  if(solShown){
+    sol='<div class="sol-lines">'+p.s.map(([ty,acc,amt])=>
+      `<div class="sol-line ${ty==='د'?'d':'c'}">
+        <span>${ty==='د'?'من ح/ ':'إلى ح/ '}${acc}</span><b>${fmt(amt)}</b>
+      </div>`).join('')+'</div>';
+  }
+  document.getElementById('prob-box').innerHTML=`
+    <div class="prob">
+      <div class="prob-text">${p.t}</div>
+      <button class="sol-toggle" onclick="solShown=!solShown;renderProblem()">${solShown?'إخفاء الحل':'إظهار الحل'}</button>
+      ${sol}
+    </div>`;
+}
+
+/* ═══════════ QUIZ ═══════════ */
+const questions=[
+  {q:'اشترت منشأة آلة: سعر القائمة 200,000 بخصم تجاري 5٪، شحن 7,000، تأمين أثناء النقل 2,000، تركيب 8,000، تشغيل تجريبي 3,000، وتأمين تشغيلي سنوي 4,000. كم التكلفة المرسملة للآلة؟',
+   o:['210,000 ريال','214,000 ريال','207,000 ريال'],c:0},
+  {q:'أصل اشتُري في 1/4 بتكلفة 120,000، قيمة تخريدية 20,000، عمر 5 سنوات، قسط ثابت. كم إهلاك السنة الأولى؟',
+   o:['20,000 ريال','15,000 ريال','18,000 ريال'],c:1},
+  {q:'آلة تكلفتها 150,000 تُهلك بطريقة القسط المتناقص بمعدل 20٪. كم إهلاك السنة الثانية؟',
+   o:['30,000 ريال','24,000 ريال','19,200 ريال'],c:1},
+  {q:'رصيد العملاء 600,000، ورصيد مخصص الديون المشكوك فيها مدين 4,000 (عجز). السياسة 3٪ من العملاء. كم مصروف الفترة؟',
+   o:['18,000 ريال','14,000 ريال','22,000 ريال'],c:2},
+  {q:'رصيد النقدية بالدفاتر 45,000. تسوية البنك أظهرت: كمبيالة حصّلها البنك 10,000 لم تُسجّل، مصاريف بنكية 500، شيك عميل مرتد 3,000، وإيداعات بالطريق 8,000. كم الرصيد الدفتري الصحيح بعد التسوية؟',
+   o:['51,500 ريال','59,500 ريال','51,000 ريال'],c:0},
+  {q:'مخزون: أول المدة 100 وحدة بـ10، مشتريات 200 وحدة بـ12 ثم 100 وحدة بـ14. بيعت 250 وحدة. كم قيمة مخزون آخر المدة بطريقة FIFO؟',
+   o:['2,000 ريال','1,800 ريال','1,600 ريال'],c:0},
+  {q:'مبيعات الفترة 34,500 ريال شاملة ضريبة القيمة المضافة 15٪، ومشتريات خاضعة 20,000 غير شاملة الضريبة. كم صافي الضريبة المستحقة؟',
+   o:['1,500 ريال','2,175 ريال','4,500 ريال'],c:0},
+  {q:'في 1/5 دفعت المنشأة 24,000 تأميناً لسنة كاملة وسجّلته أصلاً (تأمين مقدم). كم مصروف التأمين الذي يخص السنة المنتهية في 31/12؟',
+   o:['14,000 ريال','16,000 ريال','8,000 ريال'],c:1},
+  {q:'مشتريات 300,000، مردودات مشتريات 12,000، خصم مشتريات مكتسب 6,000، نقل للداخل 9,000، نقل للخارج 7,000. كم صافي المشتريات؟',
+   o:['291,000 ريال','298,000 ريال','282,000 ريال'],c:0},
+  {q:'مبيعات 500,000، مردودات مبيعات 20,000، تكلفة المبيعات 336,000. كم نسبة مجمل الربح؟',
+   o:['32.8٪','28.8٪','30٪'],c:2},
+  {q:'سعر بيع الوحدة 50 ريالاً، التكلفة المتغيرة 30، التكاليف الثابتة 100,000. كم عدد وحدات التعادل؟',
+   o:['5,000 وحدة','3,334 وحدة','2,000 وحدة'],c:0},
+  {q:'وفق IFRS 16: أصل حق استخدام بقيمة حالية 300,000 لعقد 5 سنوات، ومعدل الفائدة 5٪. كم إجمالي المصروف في قائمة الدخل للسنة الأولى (إهلاك + فائدة)؟',
+   o:['60,000 ريال','75,000 ريال','66,000 ريال'],c:1},
+  {q:'خلال السنة: شراء معدات 90,000، متحصلات بيع أرض 40,000، قرض جديد 50,000، توزيعات أرباح مدفوعة 10,000. كم صافي التدفق من الأنشطة الاستثمارية؟',
+   o:['(50,000) صافي تدفق خارج','(90,000) صافي تدفق خارج','(10,000) صافي تدفق خارج'],c:0},
+  {q:'اكتُشف أن بضاعة آخر المدة لسنة 2025 مقيّمة بالزيادة بمبلغ 15,000. ما أثر هذا الخطأ على صافي ربح سنة 2026 إذا لم يُصحّح؟',
+   o:['تخفيض الربح بـ15,000','تضخيم الربح بـ15,000','لا أثر على 2026'],c:0},
+  {q:'حقوق الملكية أول المدة 250,000. أضاف المالك معدات قيمتها 30,000، وسحب 2,000 شهرياً طوال السنة، وحقوق الملكية آخر المدة 306,000. كم صافي ربح السنة؟',
+   o:['26,000 ريال','50,000 ريال','80,000 ريال'],c:1}
+];
+
+function renderQuiz(){
+  const el=document.getElementById('quiz-content');
+  let h='';
+  if(quizDone){
+    const score=questions.filter((q,i)=>quizAns[i]===q.c).length;
+    quizPass=score>=11;
+    h+=`<div class="alert ${quizPass?'a-ok':'a-err'}" style="font-size:.95rem">
+      ${quizPass?'<b>مبروك! اجتزت الاختبار.</b> توجه لتبويب الشهادة.':'لم تجتز الاختبار.'}
+      النتيجة: <b>${score}/${questions.length}</b>
+      <div class="progress-bar"><div class="progress-fill" style="width:${score/questions.length*100}%"></div></div>
+    </div>`;
+  }
+  questions.forEach((q,qi)=>{
+    h+=`<div class="quiz-q"><h3>${qi+1}. ${q.q}</h3><div class="opts${quizDone?' locked':''}">`;
+    q.o.forEach((o,oi)=>{
+      let cls='';
+      if(quizDone && quizAns[qi]===oi){cls = (oi===q.c) ? 'ok' : 'no';}
+      h+=`<label class="opt ${cls}"><input type="radio" name="q${qi}" ${quizDone?'disabled':''} ${quizAns[qi]===oi?'checked':''} onchange="pickAns(${qi},${oi})"/><span>${o}</span></label>`;
+    });
+    h+='</div></div>';
+  });
+  h+=quizDone
+    ?(quizPass?'':'<button class="btn btn-ghost" onclick="resetQuiz()">إعادة المحاولة</button>')
+    :'<button class="btn btn-navy btn-full" onclick="submitQuiz()">تسليم الإجابات ✓</button>';
+  el.innerHTML=h;
+}
+
+function submitQuiz(){
+  if(Object.keys(quizAns).length<questions.length){alert('أجب على جميع الأسئلة أولاً.');return;}
+  quizDone=true;renderQuiz();saveState();window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function resetQuiz(){
+  quizAns={};
+  quizDone=false;
+  quizPass=false;
+  saveState();
+  renderQuiz();
+}
+
+function pickAns(qi,oi){
+  quizAns[qi]=oi;
+  saveState();
+}
+
+/* ═══════════ CERT ═══════════ */
+function renderCert(){
+  const el=document.getElementById('cert-content');
+  if(!quizPass){
+    el.innerHTML='<div class="alert a-gold">الشهادة مقفلة — اجتز الاختبار النهائي أولاً (١١/١٥ على الأقل).</div>';
+    return;
+  }
+  el.innerHTML=`
+    <div style="max-width:380px;margin-bottom:18px">
+      <label>اسمك الثلاثي كما سيظهر في الشهادة</label>
+      <input type="text" id="cname" placeholder="الاسم الثلاثي"/>
+    </div>
+    <button class="btn btn-gold" onclick="makeCert()">إصدار الشهادة</button>
+    <div id="cert-out" style="margin-top:26px"></div>`;
+  let saved='';try{saved=localStorage.getItem('mizan_cert_name')||'';}catch(e){}
+  if(saved){document.getElementById('cname').value=saved;renderCertBox(saved);}
+}
+function makeCert(){
+  const n=document.getElementById('cname').value.trim();
+  if(!n){alert('اكتب اسمك أولاً.');return;}
+  try{localStorage.setItem('mizan_cert_name',n);}catch(e){}
+  renderCertBox(n);
+}
+function renderCertBox(n){
+  const d=new Date().toLocaleDateString('ar-SA',{year:'numeric',month:'long',day:'numeric'});
+  const out=document.getElementById('cert-out');
+  if(!out)return;
+  out.innerHTML=`
+    <div class="cert">
+      
+      <h2>شهادة إتمام معتمدة</h2>
+      <p>تشهد منصة <b>ميزان برو</b> المحاسبية بأن</p>
+      <div class="cname">${n}</div>
+      <p>قد أتمّ بنجاح برنامج مهارات المحاسبة المالية<br/>شاملاً القيود البسيطة والمركّبة والسيناريوهات التطبيقية<br/>واجتاز الاختبار النهائي بتفوّق</p>
+      <p style="margin-top:18px;font-size:.82rem;color:var(--ink3)">صدرت بتاريخ: ${d}</p>
+      <button class="btn btn-gold" onclick="window.print()" style="margin-top:20px">طباعة / حفظ PDF</button>
+    </div>`;
+}
+
+/* ═══════════ PERSISTENCE ═══════════ */
+function saveState(){
+  try{
+    localStorage.setItem('mizan_entries', JSON.stringify(entries));
+    localStorage.setItem('mizan_scen', JSON.stringify([...solvedScen]));
+    localStorage.setItem('mizan_quizans', JSON.stringify(quizAns));
+    localStorage.setItem('mizan_quizdone', quizDone ? '1' : '0');
+    localStorage.setItem('mizan_quizpass', quizPass ? '1' : '0');
+  }catch(e){}
+}
+
+function loadState(){
+  try{
+    entries = JSON.parse(localStorage.getItem('mizan_entries') || '[]');
+    if(entries.length){
+      renderJournal();
+      const el=document.getElementById('hs-entries');
+      if(el)el.textContent=entries.length;
+    }
+
+    solvedScen = new Set(JSON.parse(localStorage.getItem('mizan_scen') || '[]'));
+    if(solvedScen.size){
+      const el=document.getElementById('hs-scen');
+      if(el)el.textContent=solvedScen.size+'/15';
+      renderScenGrid();
+    }
+
+    quizAns  = JSON.parse(localStorage.getItem('mizan_quizans') || '{}');
+    quizDone = localStorage.getItem('mizan_quizdone') === '1';
+    quizPass = localStorage.getItem('mizan_quizpass') === '1';
+  }catch(e){}
+}
+
+/* ═══════════ INIT ═══════════ */
+document.getElementById('e-date').value=new Date().toISOString().split('T')[0];
+addRow('d');addRow('c');
+renderScenGrid();
+loadState();
+</script>
+</body>
+</html>
